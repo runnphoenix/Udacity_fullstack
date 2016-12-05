@@ -7,7 +7,8 @@ your_name = media.Movie(
     'Your Name',
     'Two high school kids who\'ve never met - city boy Taki and country girl\
 Mitsuha - are united through their dreams.',
-    'https://upload.wikimedia.org/wikipedia/zh/thumb/d/d6/Kiminona.jpg/340px-Kiminona.jpg',
+    'https://upload.wikimedia.org/wikipedia/zh/thumb/d/d6/Kiminona.jpg/'
+    '340px-Kiminona.jpg',
     'https://youtu.be/ANWzJ19yEuY')
 
 the_english_patient = media.Movie(
@@ -15,21 +16,24 @@ the_english_patient = media.Movie(
     'At the close of WWII, a young nurse tends to a badly-burned plane crash\
 victim. His past is shown in flashbacks, revealing an involvement in a \
 fateful love affair.',
-    'https://upload.wikimedia.org/wikipedia/en/b/bd/The_English_Patient_Poster.jpg',
+    'https://upload.wikimedia.org/wikipedia/en/b/bd/'
+    'The_English_Patient_Poster.jpg',
     'https://www.youtube.com/watch?v=Xk_LRcOFT0c')
 
 jason_bourne_2016 = media.Movie(
     'Jason Bourne (2016)',
     'The CIA\'s most dangerous former operative is drawn out of hiding to\
 uncover more explosive truths about his past.',
-    'https://upload.wikimedia.org/wikipedia/en/8/8b/Jason_Bourne_soundtrack_cover.jpg',
+    'https://upload.wikimedia.org/wikipedia/en/8/8b/'
+    'Jason_Bourne_soundtrack_cover.jpg',
     'https://www.youtube.com/watch?v=v71ce1Dqqns')
 
 the_good_the_bad_and_the_ugly = media.Movie(
     'The good, the Bad and the Ugly',
     'A bounty hunting scam joins two men in an uneasy alliance against a third \
 in a race to find a fortune in gold buried in a remote cemetery.',
-    'https://upload.wikimedia.org/wikipedia/en/4/45/Good_the_bad_and_the_ugly_poster.jpg',
+    'https://upload.wikimedia.org/wikipedia/en/4/45/'
+    'Good_the_bad_and_the_ugly_poster.jpg',
     'https://www.youtube.com/watch?v=13EUXqIwDkQ')
 
 doctor_strange = media.Movie(
