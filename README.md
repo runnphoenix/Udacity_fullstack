@@ -1,4 +1,7 @@
 # Udacity_fullstack
 
 ## Description
-This is the projects of Udacity FullStack NonaDegree Program
+Projects of Udacity Full Stack Web Developer NanoDegree course
+
+## History
++ Added Project_1  2016-12-05

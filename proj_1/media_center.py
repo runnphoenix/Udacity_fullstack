@@ -5,7 +5,7 @@ import fresh_tomatoes
 
 your_name = media.Movie(
     'Your Name',
-    'Two high school kids who\'ve never met - city boy Taki and country girl\
+    'Two high school kids who\'ve never met - city boy Taki and country girl \
 Mitsuha - are united through their dreams.',
     'https://upload.wikimedia.org/wikipedia/zh/thumb/d/d6/Kiminona.jpg/'
     '340px-Kiminona.jpg',
@@ -13,7 +13,7 @@ Mitsuha - are united through their dreams.',
 
 the_english_patient = media.Movie(
     'The Egnlish Patient',
-    'At the close of WWII, a young nurse tends to a badly-burned plane crash\
+    'At the close of WWII, a young nurse tends to a badly-burned plane crash \
 victim. His past is shown in flashbacks, revealing an involvement in a \
 fateful love affair.',
     'https://upload.wikimedia.org/wikipedia/en/b/bd/'
@@ -22,7 +22,7 @@ fateful love affair.',
 
 jason_bourne_2016 = media.Movie(
     'Jason Bourne (2016)',
-    'The CIA\'s most dangerous former operative is drawn out of hiding to\
+    'The CIA\'s most dangerous former operative is drawn out of hiding to \
 uncover more explosive truths about his past.',
     'https://upload.wikimedia.org/wikipedia/en/8/8b/'
     'Jason_Bourne_soundtrack_cover.jpg',
@@ -38,7 +38,7 @@ in a race to find a fortune in gold buried in a remote cemetery.',
 
 doctor_strange = media.Movie(
     'Doctor Strange',
-    'A former neurosurgeon embarks on a journey of healing only to be drawn\
+    'A former neurosurgeon embarks on a journey of healing only to be drawn \
 into the world of the mystic arts.',
     'https://upload.wikimedia.org/wikipedia/en/c/c7/Doctor_Strange_poster.jpg',
     'https://www.youtube.com/watch?v=HSzx-zryEgM')
