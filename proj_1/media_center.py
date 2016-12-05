@@ -1,12 +1,9 @@
 #!/usr/bin/python
 
-# To include Non-ASCII characters in code
-#coding=utf-8
-
 import media
 import fresh_tomatoes
 
-your_name = media.Movie('你的名字', 
+your_name = media.Movie('Your Name', 
 'Two high school kids who\'ve never met - city boy Taki and country girl Mitsuha - \
 are united through their dreams.', 
 'https://upload.wikimedia.org/wikipedia/zh/thumb/d/d6/Kiminona.jpg/340px-Kiminona.jpg', 
@@ -27,7 +24,7 @@ more explosive truths about his past.',
 the_good_the_bad_and_the_ugly = media.Movie('The good, the Bad and the Ugly', 
 'A bounty hunting scam joins two men in an uneasy alliance against a third \
 in a race to find a fortune in gold buried in a remote cemetery.', 
-'https://upload.wikimedia.org/wikipedia/zh/3/3a/The_Good，the_bad_and_the_ugly.jpg', 
+'https://upload.wikimedia.org/wikipedia/en/4/45/Good_the_bad_and_the_ugly_poster.jpg', 
 'https://www.youtube.com/watch?v=13EUXqIwDkQ')
 
 doctor_strange = media.Movie('Doctor Strange', 
