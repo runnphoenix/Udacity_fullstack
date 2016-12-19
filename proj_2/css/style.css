@@ -1,16 +1,19 @@
 body {
-    font-family: 'Lato', sans-serif;
-    font-weight: 300;
-    color: #2d3c49;
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  color: #2d3c49;
 }
 
+.image-project {
+  width: 100%;
+}
 .font-thin {
     font-weight: 100;
 }
-.text-color-light {
+.color-light {
     color: #7d97ad;
 }
-.icon-color-blue {
+.color-blue {
     color: #02b3e4;
 }
 .logo-title {
@@ -21,4 +24,12 @@ body {
 }
 .unicode-large {
     font-size: 80px;
+}
+.separator {
+  background-color: #7d97ad;
+  height: 5px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  margin-left: auto;
+  margin-right: auto;
 }
