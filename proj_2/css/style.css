@@ -3,8 +3,10 @@ body {
   font-weight: 300;
   color: #2d3c49;
 }
-
-.image-project {
+.image {
+  width: 100%;
+}
+.image-work {
   width: 100%;
 }
 .font-thin {
@@ -32,4 +34,10 @@ body {
   margin-bottom: 30px;
   margin-left: auto;
   margin-right: auto;
+}
+
+@media (min-width: 992px) {
+  .image-work {
+    max-height: 150px;
+  }
 }
