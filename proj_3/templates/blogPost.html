@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+	<h2>{{blog.title}}</h2>
+	<div>{{blog.created.strftime("%b %d, %Y")}}</div>
+	<hr>
+	<br>
+	</textarea style="width:300px; height:500px;">{{blog.content | safe}}</textarea>
+	
+{% endblock%}
