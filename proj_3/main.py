@@ -89,6 +89,11 @@ class User(db.Model):
     def by_id(cls, user_id):
         return User.get_by_id(user_id, parent = users_key())
         
+    @classmethod
+    def signup(cls, username, pw, email = None):
+        pw_hash = make_pw_hash(username, pw)
+        user = User(name = username, pw_hash = pw_hash, email = email)
+        
 ### User Account
 class Signup(Handler):
     def get(self):
@@ -150,6 +155,7 @@ class Signup(Handler):
             # redirect
             self.redirect('/welcome')
         
+# TODO: check password
 class Login(Signup):
     def get(self):
         self.render("login.html")
@@ -174,10 +180,13 @@ class Login(Signup):
         else:
             user = User.by_name(username)
             if user:
-                self.add_cookie(user)
-                self.redirect('/welcome')
+                if valid_hash(username, password, user.pw_hash):
+                    self.add_cookie(user)
+                    self.redirect('/welcome')
+                else:
+                    self.render("login.html", username = username, error_password_wrong = "Wrong passowrd.")
             else:
-                self.write('No such user, Please signup first')
+                self.render("login.html", error_user_exist = "No such user, please signup first.")
         
 class Logout(Handler):
     def get(self):
@@ -189,7 +198,7 @@ class Welcome(Handler):
         if self.user:
             self.render("welcome.html", username = self.user.name)
         else:
-            self.redirect('/signup')
+            self.redirect('/login')
 
 ### Blogs
 def blogs_key(name = "default"):
