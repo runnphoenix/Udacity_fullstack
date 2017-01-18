@@ -12,6 +12,10 @@ def render_str(template, **params):
     t = jinja_env.get_template(template)
     return t.render(params)
     
+secret = "buringPyre"
+def make_secure_cookie(val):
+    return "%s|%s" % (val, hmac.new(secret, val).hexdigest())
+    
     
 ### Handler
 class Handler(webapp2.RequestHandler):
@@ -26,16 +30,45 @@ class MainPage(Handler):
     def get(self):
         self.write('Hello, Full Stack Nanodegree!')
         
+        
+### Users
+def users_key(group = 'default'):
+    return db.Key.from_path("users", group)
+    
+def make_salt(length = 5):
+    return ''.join( random.choice(letters) for x in xrange(length) )
+    
+def make_pw_hash(name, pw, salt = None):
+    if not salt:
+        salt = make_salt()
+    h = hashlib.sha256(name+pw+salt).hexdigest()
+    return "%s,%s" % (salt, h)
+    
+def valid_hash(name, pw, h):
+    salt = h.split(',')[0]
+    return h == make_pw_hash(name, pw, salt)
+    
+class User(db.model):
+    name = db.stringProperty(required = True)
+    pw_hash = db.stringProperty(required = True)
+    email = db.stringProperty()
+    
+    @classmethod
+    def by_name(cls, name):
+        u = User.all().filter('name=', name).get()
+        return u
+    
+        
 ### User Account
 class Signup(Handler):
     def get(self):
         self.render("signup.html")
     
     def post(self):
-        userName = self.request.get('username')
-        password = self.request.get('password')
-        verify = self.request.get('verify')
-        email = self.request.get('email')
+        self.userName = self.request.get('username')
+        self.password = self.request.get('password')
+        self.verify = self.request.get('verify')
+        self.email = self.request.get('email')
         
         has_error = False
         params = dict(username = userName, email = email)
@@ -58,7 +91,7 @@ class Signup(Handler):
         if has_error:
             self.render("signup.html", **params)
         else:
-            self.write("Signup done.")
+            self.finish()
         
     # Judge username etc
     def username_valid(self, name):
@@ -72,6 +105,19 @@ class Signup(Handler):
     def email_valid(self, email):
         EMAIL_RE = re.compile(r'^[\S]+@[\S]+\.[\S]+$')
         return EMAIL_RE.match(email)
+        
+    def finish(self):
+        user = User.by_name(self.userName)
+        if user:
+            errorMessage = "User already esixt."
+            self.render("signup.html", error_username = errorMessage)
+        else:
+            pw_hash = make_pw_hash(self.userName, self.password)
+            user = User(parent = users_key(), name = self.userName, pw_hash = pw_hash, email = self.email)
+            user.put()
+            # set cookie
+            
+            # redirect
         
 class Login(Handler):
     def get(self):
