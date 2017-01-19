@@ -31,6 +31,7 @@ class Handler(webapp2.RequestHandler):
         self.response.out.write(*a, **kw)
     
     def render(self, template, **kw):
+        kw["logged"] = self.user
         self.write(render_str(template, **kw))
         
     def add_cookie(self, user):
@@ -56,7 +57,7 @@ class Handler(webapp2.RequestHandler):
 ### MainPage
 class MainPage(Handler):
     def get(self):
-        self.write('Hello, Full Stack Nanodegree!')
+        self.render("base.html")
         
 ### Users
 def users_key(group = 'default'):

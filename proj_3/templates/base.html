@@ -1,22 +1,42 @@
 <!DOCTYPE html>
-
 <html>
-	
 	<head>
-		<title>Full Stack Nanodegree Blog</title>
+		<meta charset="UTF-8">
+		<title>Full Stack Nanodegree</title>
 	</head>
-	
 	<body>
-	
-		<a href="/blog" class="main-title">
-		<h2>Full Stack Nanodegree Blog</h2>
-		</a>
+		<h1>Full Stack Nanodegree</h1>
 		
-		<div>
-		{% block content %}
+		<table>
+			<tr>
+			{% if not logged %}
+				<td>
+					<a href="/signup">
+					signup
+					</a>
+				</td>
+				<td>
+					<a href="/login">
+					Login
+					</a>
+				</td>
+			{% else %}
+				<td>
+					<a href="/logout">
+					logout
+					</a>
+				</td>
+			{% endif %}
+			</tr>
+		</table>
+
+		<hr>
+		
+		{% block userAccount %}
 		{% endblock %}
-		</div>
+		
+		{% block blog %}
+		{% endblock %}
 		
 	</body>
-	
 </html>
