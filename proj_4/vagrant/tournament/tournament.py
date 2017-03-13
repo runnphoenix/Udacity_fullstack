@@ -34,7 +34,7 @@ def countPlayers():
     DB = psycopg2.connect("dbname=tournament")
     c = DB.cursor()
     c.execute('select count(*) from players')
-    count = c.fetchall()
+    count = c.fetchall()[0][0]
     DB.close()
     return count
 
@@ -50,9 +50,9 @@ def registerPlayer(name):
     """
     DB = psycopg2.connect("dbname=tournament")
     c = DB.cursor()
-    c.execute('insert into players (name) values (name)')
+    c.execute('insert into players (name) values (%s)', (name,))
+    DB.commit()
     DB.close()
-    return count
 
 
 def playerStandings():
@@ -73,8 +73,7 @@ def playerStandings():
     c.execute('select players.id, players.name, c=count(matches.player1), d=c+count(matches.player2)\
               where players.id == matches.player1 from players, matches\
               group by matches.player1 order by c desc')
-    for row in c.fetchall()
-    DB.cloe()
+    #for row in c.fetchall()
     DB.close()
 
 
