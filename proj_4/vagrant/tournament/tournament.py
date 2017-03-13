@@ -13,7 +13,7 @@ def connect():
 
 def deleteMatches():
     """Remove all the match records from the database."""
-    DB = psycopg2.connect("dbname=tournament")
+    DB = connect()
     c = DB.cursor()
     c.execute('delete from matches')
     DB.commit()
@@ -22,7 +22,7 @@ def deleteMatches():
 
 def deletePlayers():
     """Remove all the player records from the database."""
-    DB = psycopg2.connect("dbname=tournament")
+    DB = connect()
     c = DB.cursor()
     c.execute('delete from players')
     DB.commit()
@@ -31,10 +31,10 @@ def deletePlayers():
 
 def countPlayers():
     """Returns the number of players currently registered."""
-    DB = psycopg2.connect("dbname=tournament")
+    DB = connect()
     c = DB.cursor()
     c.execute('select count(*) from players')
-    count = c.fetchall()[0][0]
+    count = c.fetchone()[0]
     DB.close()
     return count
 
@@ -48,7 +48,7 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
-    DB = psycopg2.connect("dbname=tournament")
+    DB = connect()
     c = DB.cursor()
     c.execute('insert into players (name) values (%s)', (name,))
     DB.commit()
@@ -68,13 +68,20 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-    DB = psycopg2.connect("dbname=tournament")
+    DB = connect()
     c = DB.cursor()
-    c.execute('select players.id, players.name, c=count(matches.player1), d=c+count(matches.player2)\
-              where players.id == matches.player1 from players, matches\
-              group by matches.player1 order by c desc')
-    #for row in c.fetchall()
+    results = []
+    # Test if have had any matches
+    c.execute('SELECT count(*) from matches')
+    count = c.fetchone()[0]
+    if count == 0:
+        c.execute('SELECT * from players')
+        results = [(row[0], row[1], 0, 0) for row in c.fetchall()]
+    else:
+        c.execute('SELECT players.id, players.name, count(players.id) as wins FROM players, matches WHERE players.id=matches.winner GROUP BY players.id ORDER BY wins')
+        print[row for row in c.fetchall()]
     DB.close()
+    return results
 
 
 def reportMatch(winner, loser):
@@ -84,9 +91,9 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
-    DB = psycopg2.connect("dbname=tournament")
+    DB = connect()
     c = DB.cursor()
-    c.execute('insert into matches (player1, player2) values (winner, loser)')
+    c.execute('insert into matches (winner, loser) values (%s,%s)', (winner, loser,))
     DB.commit()
     DB.close()
 
