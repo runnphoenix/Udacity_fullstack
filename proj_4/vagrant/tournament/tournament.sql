@@ -14,6 +14,5 @@ CREATE TABLE players (
 CREATE TABLE matches (
 	id serial primary key,
 	player1 INT references players (id),
-	player2 INT references players (id),
-	result boolean
+	player2 INT references players (id)
 );
