@@ -117,3 +117,25 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+    standings = playerStandings()
+    pairs = []
+    
+    DB = connect()
+    c = DB.cursor()
+    c.execute('SELECT * FROM players')
+    all_players = c.fetchall()
+    ever_win_players = [(standing[0], standing[1]) for standing in standings]
+    all_lose_players = [player for player in all_players if player not in ever_win_players]
+        
+    while len(ever_win_players) > 1:
+        first_player = ever_win_players.pop()
+        second_player = ever_win_players.pop()
+        pairs.append((first_player[0], first_player[1], second_player[0], second_player[1]))
+        
+    while len(all_lose_players) > 1:
+        first_player = all_lose_players.pop()
+        second_player = all_lose_players.pop()
+        pairs.append((first_player[0], first_player[1], second_player[0], second_player[1]))
+    
+    return pairs
+    
