@@ -15,7 +15,7 @@ def deleteMatches():
     """Remove all the match records from the database."""
     DB = connect()
     c = DB.cursor()
-    c.execute('delete from matches')
+    c.execute('DELETE FROM matches')
     DB.commit()
     DB.close()
 
@@ -24,7 +24,7 @@ def deletePlayers():
     """Remove all the player records from the database."""
     DB = connect()
     c = DB.cursor()
-    c.execute('delete from players')
+    c.execute('DELETE FROM players')
     DB.commit()
     DB.close()
 
@@ -33,7 +33,7 @@ def countPlayers():
     """Returns the number of players currently registered."""
     DB = connect()
     c = DB.cursor()
-    c.execute('select count(*) from players')
+    c.execute('SELECT count(*) FROM players')
     count = c.fetchone()[0]
     DB.close()
     return count
@@ -50,7 +50,7 @@ def registerPlayer(name):
     """
     DB = connect()
     c = DB.cursor()
-    c.execute('insert into players (name) values (%s)', (name,))
+    c.execute('INSERT INTO players (name) VALUES (%s)', (name,))
     DB.commit()
     DB.close()
 
@@ -82,8 +82,13 @@ def playerStandings():
         win_records = c.fetchall()
         for i in range(len(win_records)):
             win_record = win_records[i]
-            c.execute('SELECT count(matches.id) FROM matches WHERE matches.loser=(%s)', (win_record[0],))
-            results.append((win_record[0], win_record[1], win_record[2], win_record[2] + c.fetchone()[0]))
+            c.execute('SELECT count(matches.id) FROM matches WHERE matches.loser=(%s)',
+                      (win_record[0],))
+            results.append(
+                (win_record[0],
+                 win_record[1],
+                 win_record[2],
+                 win_record[2] + c.fetchone()[0]))
     DB.close()
     return results
 
@@ -97,7 +102,8 @@ def reportMatch(winner, loser):
     """
     DB = connect()
     c = DB.cursor()
-    c.execute('insert into matches (winner, loser) values (%s,%s)', (winner, loser,))
+    c.execute('INSERT INTO matches (winner, loser) VALUES (%s,%s)',
+              (winner, loser,))
     DB.commit()
     DB.close()
 
@@ -119,23 +125,30 @@ def swissPairings():
     """
     standings = playerStandings()
     pairs = []
-    
+
     DB = connect()
     c = DB.cursor()
     c.execute('SELECT * FROM players')
     all_players = c.fetchall()
     ever_win_players = [(standing[0], standing[1]) for standing in standings]
     all_lose_players = [player for player in all_players if player not in ever_win_players]
-        
+
     while len(ever_win_players) > 1:
         first_player = ever_win_players.pop()
         second_player = ever_win_players.pop()
-        pairs.append((first_player[0], first_player[1], second_player[0], second_player[1]))
-        
+        pairs.append(
+            (first_player[0],
+             first_player[1],
+             second_player[0],
+             second_player[1]))
+
     while len(all_lose_players) > 1:
         first_player = all_lose_players.pop()
         second_player = all_lose_players.pop()
-        pairs.append((first_player[0], first_player[1], second_player[0], second_player[1]))
-    
+        pairs.append(
+            (first_player[0],
+             first_player[1],
+             second_player[0],
+             second_player[1]))
+
     return pairs
-    
