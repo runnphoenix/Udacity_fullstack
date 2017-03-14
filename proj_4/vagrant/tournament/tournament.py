@@ -78,10 +78,12 @@ def playerStandings():
         c.execute('SELECT * from players')
         results = [(row[0], row[1], 0, 0) for row in c.fetchall()]
     else:
-        c.execute('SELECT players.id, players.name, count(players.id) as wins, count(matches.loser) FROM players, matches WHERE players.id=matches.winner GROUP BY players.id ORDER BY wins DESC')
-	print[row for row in c.fetchall()]
-	c.execute('SELECT players.id, players.name, count(players.id) as loses FROM players, matches WHERE players.id=matches.loser GROUP BY players.id ORDER BY loses DESC')
-        print[row for row in c.fetchall()]
+        c.execute('SELECT players.id, players.name, count(players.id) as wins FROM players, matches WHERE players.id=matches.winner GROUP BY players.id ORDER BY wins DESC')
+        win_records = c.fetchall()
+        for i in range(len(win_records)):
+            win_record = win_records[i]
+            c.execute('SELECT count(matches.id) FROM matches WHERE matches.loser=(%s)', (win_record[0],))
+            results.append((win_record[0], win_record[1], win_record[2], win_record[2] + c.fetchone()[0]))
     DB.close()
     return results
 
