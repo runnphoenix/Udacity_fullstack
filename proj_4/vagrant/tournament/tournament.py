@@ -15,7 +15,7 @@ def deleteMatches():
     """Remove all the match records from the database."""
     DB = connect()
     c = DB.cursor()
-    c.execute('DELETE FROM matches')
+    c.execute('DELETE from matches')
     DB.commit()
     DB.close()
 
@@ -71,19 +71,29 @@ def playerStandings():
     DB = connect()
     c = DB.cursor()
     results = []
-    # Test if have had any matches
+    
     c.execute('SELECT count(*) from matches')
-    count = c.fetchone()[0]
-    if count == 0:
+    matches_number = c.fetchone()[0]
+    # Does not have any matches yet
+    if matches_number == 0:
         c.execute('SELECT * from players')
         results = [(row[0], row[1], 0, 0) for row in c.fetchall()]
+    # Matches held already
     else:
-        c.execute('SELECT players.id, players.name, count(players.id) as wins FROM players, matches WHERE players.id=matches.winner GROUP BY players.id ORDER BY wins DESC')
+        # The total number of matches a player attended not queried
+        c.execute('SELECT players.id, players.name, count(matches.winner) AS wins\
+                   FROM players LEFT JOIN matches\
+                   ON players.id=matches.winner\
+                   GROUP BY players.id\
+                   ORDER BY wins DESC')
         win_records = c.fetchall()
+        
         for i in range(len(win_records)):
             win_record = win_records[i]
+            # Query the number of matches a player has lost
             c.execute('SELECT count(matches.id) FROM matches WHERE matches.loser=(%s)',
                       (win_record[0],))
+            # Get the number of matches played by adding the numbers of matches won and lost 
             results.append(
                 (win_record[0],
                  win_record[1],
@@ -126,25 +136,9 @@ def swissPairings():
     standings = playerStandings()
     pairs = []
 
-    DB = connect()
-    c = DB.cursor()
-    c.execute('SELECT * FROM players')
-    all_players = c.fetchall()
-    ever_win_players = [(standing[0], standing[1]) for standing in standings]
-    all_lose_players = [player for player in all_players if player not in ever_win_players]
-
-    while len(ever_win_players) > 1:
-        first_player = ever_win_players.pop()
-        second_player = ever_win_players.pop()
-        pairs.append(
-            (first_player[0],
-             first_player[1],
-             second_player[0],
-             second_player[1]))
-
-    while len(all_lose_players) > 1:
-        first_player = all_lose_players.pop()
-        second_player = all_lose_players.pop()
+    while len(standings) > 1:
+        first_player = standings.pop()
+        second_player = standings.pop()
         pairs.append(
             (first_player[0],
              first_player[1],
