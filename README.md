@@ -14,8 +14,9 @@ Enter proj_2 directory, open `index.html` with your browser.
 
 + *Project 4 - Tournament Results*
 
-TODO: usage instructions
+In order to run this project, you should have `PostgreSql` and `Python` installed first. If you are going to use the virtual machine Udacity provides, see more installation instructions [here](https://classroom.udacity.com/nanodegrees/nd004/parts/0041345405/modules/353202897075460/lessons/3423258756/concepts/14c72fe3-e3fe-4959-9c4b-467cf5b7c3a0#).
 
+Test this project by running `python tournament_test.py` in terminal once you have finished the previous step.
 
 ## History
 + Added Project_1  2016-12-05
