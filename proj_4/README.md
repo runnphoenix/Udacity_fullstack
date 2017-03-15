@@ -1,4 +1,18 @@
-rdb-fullstack
-=============
+# Udacity Fullstack Nanodegree Project 4
+## *Tournament Results*
 
-Common code for the Relational Databases and Full Stack Fundamentals courses
+-------------
+
+## Description
+Projects of Udacity Full Stack Web Developer NanoDegree course.
+
+Develop a database schema to store the game matches between players. Then write code to query this data and determine the winners of various games.
+
+## Usage
+In order to run this project, you should have `PostgreSql` and `Python` installed first. If you are going to use the virtual machine Udacity provides, see more installation instructions [here](https://classroom.udacity.com/nanodegrees/nd004/parts/0041345405/modules/353202897075460/lessons/3423258756/concepts/14c72fe3-e3fe-4959-9c4b-467cf5b7c3a0#).
+
+Test this project by running `python tournament_test.py` in terminal once you have finished the previous step.
+
+## History
++ Added          2017-03-10
++ First feedback 2017-03-14
