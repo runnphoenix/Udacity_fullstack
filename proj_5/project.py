@@ -5,6 +5,9 @@ from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Restaurant, MenuItem
 
+#Login Session
+from flask import session as login_session
+import random, string
 
 #Connect to Database and create database session
 engine = create_engine('sqlite:///restaurantmenu.db')
@@ -13,6 +16,13 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+# Create a state token to prevent request forgery.
+# Store it in the session for later validation.
+@app.route('/login')
+def showLogin():
+    state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in xrange(32))
+    login_session['state'] = state
+    return "The current session state is %s" % login_session['state']
 
 #JSON APIs to view Restaurant Information
 @app.route('/restaurant/<int:restaurant_id>/menu/JSON')
@@ -77,6 +87,7 @@ def deleteRestaurant(restaurant_id):
   else:
     return render_template('deleteRestaurant.html',restaurant = restaurantToDelete)
 
+
 #Show a restaurant menu
 @app.route('/restaurant/<int:restaurant_id>/')
 @app.route('/restaurant/<int:restaurant_id>/menu/')
@@ -84,7 +95,7 @@ def showMenu(restaurant_id):
     restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
     items = session.query(MenuItem).filter_by(restaurant_id = restaurant_id).all()
     return render_template('menu.html', items = items, restaurant = restaurant)
-     
+
 
 
 #Create a new menu item
@@ -116,7 +127,7 @@ def editMenuItem(restaurant_id, menu_id):
         if request.form['course']:
             editedItem.course = request.form['course']
         session.add(editedItem)
-        session.commit() 
+        session.commit()
         flash('Menu Item Successfully Edited')
         return redirect(url_for('showMenu', restaurant_id = restaurant_id))
     else:
@@ -127,7 +138,7 @@ def editMenuItem(restaurant_id, menu_id):
 @app.route('/restaurant/<int:restaurant_id>/menu/<int:menu_id>/delete', methods = ['GET','POST'])
 def deleteMenuItem(restaurant_id,menu_id):
     restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
-    itemToDelete = session.query(MenuItem).filter_by(id = menu_id).one() 
+    itemToDelete = session.query(MenuItem).filter_by(id = menu_id).one()
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
