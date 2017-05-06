@@ -194,8 +194,8 @@ def categoryMenuJSON(category_id):
 
 @app.route('/category/<int:category_id>/item/<int:item_id>/JSON')
 def ItemJSON(category_id, item_id):
-    Item = session.query(Item).filter_by(id=item_id).one()
-    return jsonify(Item=Menu_Item.serialize)
+    ItemInfo = session.query(Item).filter_by(id=item_id).one()
+    return jsonify(Item=ItemInfo.serialize)
 
 
 @app.route('/category/JSON')
@@ -295,7 +295,6 @@ def newItem(category_id):
         newItem = Item(
             name=request.form['name'],
             description=request.form['description'],
-            price=request.form['price'],
             category_id=category_id,
             user_id=category.user_id)
         session.add(newItem)
@@ -303,7 +302,7 @@ def newItem(category_id):
         flash('New Menu %s Item Successfully Created' % (newItem.name))
         return redirect(url_for('showCategory', category_id=category_id))
     else:
-        return render_template('newitem.html',
+        return render_template('newItem.html',
                                category_id=category_id,
                                username=login_session['username'])
 
@@ -322,19 +321,16 @@ def editItem(category_id, item_id):
             editedItem.name = request.form['name']
         if request.form['description']:
             editedItem.description = request.form['description']
-        if request.form['price']:
-            editedItem.price = request.form['price']
         session.add(editedItem)
         session.commit()
         flash('Menu Item Successfully Edited')
         return redirect(url_for('showCategory', category_id=category_id))
     else:
-        return render_template(
-            'edititem.html',
-            category_id=category_id,
-            item_id=item_id,
-            item=editedItem,
-            username=login_session['username'])
+        return render_template('editItem.html',
+                               category_id=category_id,
+                               item_id=item_id,
+                               item=editedItem,
+                               username=login_session['username'])
 
 
 # Delete a item
@@ -354,6 +350,7 @@ def deleteItem(category_id, item_id):
     else:
         return render_template('deleteItem.html',
                                item=itemToDelete,
+                               category_id=category_id,
                                username=login_session['username'])
 
 
