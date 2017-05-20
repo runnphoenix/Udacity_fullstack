@@ -296,7 +296,8 @@ def newItem(category_id):
         if (request.form['name']=='') or (request.form['description']==''):
             return render_template('newItem.html',
                                    category_id=category_id,
-                                   username=login_session.get('username'))
+                                   username=login_session.get('username'),
+                                   error_messages='Input can not be empty.')
         else:
             newItem = Item(
                 name=request.form['name'],
