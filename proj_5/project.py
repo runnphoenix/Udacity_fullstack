@@ -292,15 +292,21 @@ def newItem(category_id):
 
     category = session.query(Category).filter_by(id=category_id).one()
     if request.method == 'POST':
-        newItem = Item(
-            name=request.form['name'],
-            description=request.form['description'],
-            category_id=category_id,
-            user_id=category.user_id)
-        session.add(newItem)
-        session.commit()
-        flash('New Menu %s Item Successfully Created' % (newItem.name))
-        return redirect(url_for('showCategory', category_id=category_id))
+        print(request.form['name'])
+        if (request.form['name']=='') or (request.form['description']==''):
+            return render_template('newItem.html',
+                                   category_id=category_id,
+                                   username=login_session.get('username'))
+        else:
+            newItem = Item(
+                name=request.form['name'],
+                description=request.form['description'],
+                category_id=category_id,
+                user_id=category.user_id)
+            session.add(newItem)
+            session.commit()
+            flash('New Menu %s Item Successfully Created' % (newItem.name))
+            return redirect(url_for('showCategory', category_id=category_id))
     else:
         return render_template('newItem.html',
                                category_id=category_id,
