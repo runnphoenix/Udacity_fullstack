@@ -211,7 +211,7 @@ def showCategories():
     categories = session.query(Category).order_by(asc(Category.name))
     return render_template('categories.html',
                            categories=categories,
-                           username=login_session['username'])
+                           username=login_session.get('username'))
 
 
 # Create a new category
@@ -229,7 +229,7 @@ def newCategory():
         return redirect(url_for('showCategories'))
     else:
         return render_template('newCategory.html',
-                               username=login_session['username'])
+                               username=login_session.get('username'))
 
 
 # Edit a category
@@ -248,7 +248,7 @@ def editCategory(category_id):
     else:
         return render_template('editCategory.html',
                                category=editedCategory,
-                               username=login_session['username'])
+                               username=login_session.get('username'))
 
 
 # Delete a category
@@ -268,7 +268,7 @@ def deleteCategory(category_id):
     else:
         return render_template('deleteCategory.html',
                                category=categoryToDelete,
-                               username=login_session['username'])
+                               username=login_session.get('username'))
 
 
 # Show a category
@@ -280,7 +280,7 @@ def showCategory(category_id):
     return render_template('category.html',
                            items=items,
                            category=category,
-                           username=login_session['username'])
+                           username=login_session.get('username'))
 
 
 # Create a new item
@@ -304,7 +304,7 @@ def newItem(category_id):
     else:
         return render_template('newItem.html',
                                category_id=category_id,
-                               username=login_session['username'])
+                               username=login_session.get('username'))
 
 
 # Edit a item
@@ -330,7 +330,7 @@ def editItem(category_id, item_id):
                                category_id=category_id,
                                item_id=item_id,
                                item=editedItem,
-                               username=login_session['username'])
+                               username=login_session.get('username'))
 
 
 # Delete a item
@@ -351,7 +351,7 @@ def deleteItem(category_id, item_id):
         return render_template('deleteItem.html',
                                item=itemToDelete,
                                category_id=category_id,
-                               username=login_session['username'])
+                               username=login_session.get('username'))
 
 
 if __name__ == '__main__':
