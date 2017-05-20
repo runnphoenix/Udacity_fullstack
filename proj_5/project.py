@@ -279,7 +279,7 @@ def deleteCatalog(catalog_name):
 def showCatalog(catalog_name):
     catalog = session.query(Catalog).filter_by(name=catalog_name).one()
     items = session.query(Item).filter_by(
-        catalog=catalog).all()
+        catalog=catalog).order_by(Item.date_created.desc()).all()
     return render_template('catalog.html',
                            items=items,
                            catalog=catalog,
