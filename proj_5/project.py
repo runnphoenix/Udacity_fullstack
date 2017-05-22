@@ -316,25 +316,26 @@ def showItem(catalog_name, item_name):
 
 
 # Create a new item
-@app.route('/catalog/<catalog_name>/new/', methods=['GET', 'POST'])
-def newItem(catalog_name):
+@app.route('/catalog/item/new/', methods=['GET', 'POST'])
+def newItem():
     if 'username' not in login_session:
         return redirect('/login')
 
-    catalog = session.query(Catalog).filter_by(name=catalog_name).one()
-    catalog_items = session.query(Item).filter_by(catalog=catalog)
+    catalogs = session.query(Catalog).all()
     if request.method == 'POST':
+        catalog = request.form['catalog']
+        catalog_items = session.query(Item).filter_by(catalog=catalog)
         # Same name is not allowed
         for item in catalog_items:
             if item.name == request.form['name']:
                 return render_template('newItem.html',
-                                       catalog_name=catalog_name,
+                                       catalogs=catalogs,
                                        username=login_session.get('username'),
                                        error_messages='Same item already existed')
         # Empty form not allowed
         if (request.form['name']=='') or (request.form['description']==''):
             return render_template('newItem.html',
-                                   catalog_name=catalog_name,
+                                   catalogs=catalogs,
                                    username=login_session.get('username'),
                                    error_messages='Input can not be empty.')
         # Generate the new item
@@ -350,7 +351,7 @@ def newItem(catalog_name):
             return redirect(url_for('showCatalog', catalog_name=catalog_name))
     else:
         return render_template('newItem.html',
-                               catalog_name=catalog_name,
+                               catalogs=catalogs,
                                username=login_session.get('username'))
 
 
