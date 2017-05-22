@@ -17,8 +17,8 @@
 <!-- The owner can delete or edit the item -->
 {% if user_id == item.user.id %}
  <div>
-   <a href='{{url_for('editItem', catalog_name=item.catalog.name, item_name=item.name)}}'>Edit</a> |
-   <a href='{{url_for('deleteItem', catalog_name=item.catalog.name, item_name=item.name)}}'>Delete</a>
+   <a style='color:red;' href='{{url_for('editItem', catalog_name=item.catalog.name, item_name=item.name)}}'>Edit</a> |
+   <a style='color:red;' href='{{url_for('deleteItem', catalog_name=item.catalog.name, item_name=item.name)}}'>Delete</a>
  </div>
 {% endif %}
 
