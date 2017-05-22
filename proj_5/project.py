@@ -328,6 +328,7 @@ def newItem():
     catalogs = session.query(Catalog).all()
     if request.method == 'POST':
         catalog_name = request.form['categories']
+        print(catalog_name)
         catalog = session.query(Catalog).filter_by(name=catalog_name).one()
         catalog_items = session.query(Item).filter_by(catalog=catalog)
         # Same name is not allowed
