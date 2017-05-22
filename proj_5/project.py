@@ -101,7 +101,7 @@ def gconnect():
     answer = requests.get(userinfo_url, params=params)
     data = json.loads(answer.text)
 
-    login_session['username'] = data['name']
+    login_session['user_id'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
@@ -113,7 +113,7 @@ def gconnect():
 
     output = ''
     output += '<h1>Welcome, '
-    output += login_session['username']
+    output += login_session['user_id']
     output += '!</h1>'
 
     output += '<img src="'
@@ -121,7 +121,7 @@ def gconnect():
     output += '"style = "width: 300px; height: 300px; border-radius:150px;'
     output += ' -webkit-border-radius: 150px;-moz-border-radisu: 150px;"> '
 
-    flash("you are now logged in as %s" % login_session['username'])
+    flash("you are now logged in as %s" % login_session['user_id'])
     return output
 
 
@@ -144,7 +144,7 @@ def gdisconnect():
         # reset the user's session:
         del login_session['credentials']
         del login_session['gplus_id']
-        del login_session['username']
+        del login_session['user_id']
         del login_session['email']
         del login_session['picture']
 
@@ -161,7 +161,7 @@ def gdisconnect():
 
 def createUser(login_session):
     newUser = User(
-        name=login_session['username'],
+        name=login_session['user_id'],
         email=login_session['email'],
         picture=login_session['picture'])
     session.add(newUser)
@@ -213,7 +213,7 @@ def showCatalogs():
     return render_template('catalogs.html',
                            catalogs=catalogs,
                            items=recent_items,
-                           username=login_session.get('username'))
+                           user_id=login_session.get('user_id'))
 
 
 # Create a new catalog
@@ -228,12 +228,12 @@ def newCatalog():
         for catalog in catalogs:
             if catalog.name == request.form['name']:
                 return render_template('newCatalog.html',
-                                       username=login_session.get('username'),
+                                       user_id=login_session.get('user_id'),
                                        error_messages='Same catalog existed.')
 
         if request.form['name'] == '':
             return render_template('newCatalog.html',
-                                   username=login_session.get('username'),
+                                   user_id=login_session.get('user_id'),
                                    error_messages='Input can not be empty.')
         else:
             newCatalog = Catalog(
@@ -245,7 +245,7 @@ def newCatalog():
             return redirect(url_for('showCatalogs'))
     else:
         return render_template('newCatalog.html',
-                               username=login_session.get('username'))
+                               user_id=login_session.get('user_id'))
 
 
 # Edit a catalog
@@ -264,7 +264,7 @@ def editCatalog(catalog_name):
     else:
         return render_template('editCatalog.html',
                                catalog=editedCatalog,
-                               username=login_session.get('username'))
+                               user_id=login_session.get('user_id'))
 
 
 # Delete a catalog
@@ -287,19 +287,21 @@ def deleteCatalog(catalog_name):
     else:
         return render_template('deleteCatalog.html',
                                catalog=catalogToDelete,
-                               username=login_session.get('username'))
+                               user_id=login_session.get('user_id'))
 
 
 # Show a catalog
 @app.route('/catalog/<catalog_name>/')
 def showCatalog(catalog_name):
+    catalogs = session.query(Catalog).all()
     catalog = session.query(Catalog).filter_by(name=catalog_name).one()
     items = session.query(Item).filter_by(
         catalog=catalog).order_by(Item.date_created.desc()).all()
     return render_template('catalog.html',
+                           catalogs=catalogs,
                            items=items,
                            catalog=catalog,
-                           username=login_session.get('username'))
+                           user_id=login_session.get('user_id'))
 
 
 ###########################  ITEMS  ############################################
@@ -312,7 +314,9 @@ def showItem(catalog_name, item_name):
     if request.method == 'POST':
         return
     else:
-        return render_template('item.html', item=item)
+        return render_template('item.html',
+                               item=item,
+                               user_id=login_session.get('user_id'))
 
 
 # Create a new item
@@ -323,20 +327,21 @@ def newItem():
 
     catalogs = session.query(Catalog).all()
     if request.method == 'POST':
-        catalog = request.form['catalog']
+        catalog_name = request.form['categories']
+        catalog = session.query(Catalog).filter_by(name=catalog_name).one()
         catalog_items = session.query(Item).filter_by(catalog=catalog)
         # Same name is not allowed
         for item in catalog_items:
             if item.name == request.form['name']:
                 return render_template('newItem.html',
                                        catalogs=catalogs,
-                                       username=login_session.get('username'),
+                                       user_id=login_session.get('user_id'),
                                        error_messages='Same item already existed')
         # Empty form not allowed
         if (request.form['name']=='') or (request.form['description']==''):
             return render_template('newItem.html',
                                    catalogs=catalogs,
-                                   username=login_session.get('username'),
+                                   user_id=login_session.get('user_id'),
                                    error_messages='Input can not be empty.')
         # Generate the new item
         else:
@@ -348,11 +353,13 @@ def newItem():
             session.add(newItem)
             session.commit()
             flash('New Menu %s Item Successfully Created' % (newItem.name))
-            return redirect(url_for('showCatalog', catalog_name=catalog_name))
+            return redirect(url_for('showItem',
+                                    catalog_name=catalog.name,
+                                    item_name = newItem.name))
     else:
         return render_template('newItem.html',
                                catalogs=catalogs,
-                               username=login_session.get('username'))
+                               user_id=login_session.get('user_id'))
 
 
 # Edit a item
@@ -378,7 +385,7 @@ def editItem(catalog_name, item_name):
                                catalog_name=catalog_name,
                                item_name=item_name,
                                item=editedItem,
-                               username=login_session.get('username'))
+                               user_id=login_session.get('user_id'))
 
 
 # Delete a item
@@ -399,7 +406,7 @@ def deleteItem(catalog_name, item_name):
         return render_template('deleteItem.html',
                                item=itemToDelete,
                                catalog_name=catalog_name,
-                               username=login_session.get('username'))
+                               user_id=login_session.get('user_id'))
 
 
 if __name__ == '__main__':

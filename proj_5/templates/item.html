@@ -2,7 +2,22 @@
 {% block content %}
 {% include "header.html" %}
 
-<div>{{item.name}}</div>
-<div>{{item.description}}</div>
+<div class="row">
+  <div class="col-md-12">
+    <h3>{{item.name}}</h3>
+  </div>
+</div>
+<div class="row"> 
+  <div class="col-md-12">
+    {{item.description}}
+  </div>
+</div>
+<!-- The owner can delete or edit the item -->
+{% if user_id == item.user.id %}
+ <div>
+   <a href='{{url_for('editItem', catalog_name=item.catalog.name, item_name=item.name)}}'>Edit</a> |
+   <a href='{{url_for('deleteItem', catalog_name=item.catalog.name, item_name=item.name)}}'>Delete</a>
+ </div>
+{% endif %}
 
 {% endblock %}

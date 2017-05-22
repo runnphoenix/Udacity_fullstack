@@ -17,21 +17,26 @@
 <div class="row">
   <div class="col-md-10">
     <div class="col-md-3">
+      {% if user_id != None %}
+        <div><a href="{{url_for('newCatalog')}}">Add Catalog</a></div>
+      {% endif %}
       <h3>Categories</h3>
-      <div><a href="{{url_for('newCatalog')}}">Add Catalog</a></div>
       {% for catalog in catalogs %}
 		    <a href = "{{url_for('showCatalog', catalog_name = catalog.name)}}">
-			    <div>{{catalog.name}}</div>
+			    <div style='color:red'>{{catalog.name}}</div>
 		    </a>
       {% endfor %}
     </div>
 
     <div class="col-md-7">
+      <!-- Only owner can add new item to category -->
+      {% if user_id != None %}
+         <div><a href="{{url_for('newItem')}}">Add Item</a></div>
+      {% endif %}
       <h3>Items</h3>
-      <div><a href="{{url_for('newCatalog')}}">Add Item</a></div>
       {% for item in items %}
         <a href="{{url_for('showItem', catalog_name=item.catalog.name, item_name=item.name)}}">
-          <div>{{item.name}}</div>
+          <div style='color:red;'>{{item.name}}<span style='font-style:italic;color:gray;'> ({{item.catalog.name}})</span></div>
         </a>
       {% endfor %}
     </div>

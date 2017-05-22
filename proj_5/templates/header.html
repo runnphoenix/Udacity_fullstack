@@ -5,11 +5,11 @@
 		</a>
 	</div>
 	<div class="col-md-6 text-right">
-    {% if username == None %}
+    {% if user_id == None %}
       <a href="{{url_for('showLogin')}}">Login</a>
     {% else %}
     <a href="{{url_for('gdisconnect')}}">Logout</a>
-      <div>{{username}}</div>
+    <div>{{user_id}}</div>
     {% endif %}
 	</div>
 </div>
