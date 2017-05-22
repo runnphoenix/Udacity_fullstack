@@ -219,14 +219,28 @@ def showCatalogs():
 def newCatalog():
     if 'username' not in login_session:
         return redirect('/login')
+
     if request.method == 'POST':
-        newCatalog = Catalog(
-            name=request.form['name'],
-            user_id=login_session['user_id'])
-        session.add(newCatalog)
-        flash('New Catalog %s Successfully Created' % newCatalog.name)
-        session.commit()
-        return redirect(url_for('showCatalogs'))
+        catalogs = session.query(Catalog).all()
+        # Check if same catalog name existed
+        for catalog in catalogs:
+            if catalog.name == request.form['name']:
+                return render_template('newCatalog.html',
+                                       username=login_session.get('username'),
+                                       error_messages='Same catalog existed.')
+
+        if request.form['name'] == '':
+            return render_template('newCatalog.html',
+                                   username=login_session.get('username'),
+                                   error_messages='Input can not be empty.')
+        else:
+            newCatalog = Catalog(
+                name=request.form['name'],
+                user_id=login_session['user_id'])
+            session.add(newCatalog)
+            flash('New Catalog %s Successfully Created' % newCatalog.name)
+            session.commit()
+            return redirect(url_for('showCatalogs'))
     else:
         return render_template('newCatalog.html',
                                username=login_session.get('username'))
@@ -296,13 +310,22 @@ def newItem(catalog_name):
         return redirect('/login')
 
     catalog = session.query(Catalog).filter_by(name=catalog_name).one()
+    catalog_items = session.query(Item).filter_by(catalog=catalog)
     if request.method == 'POST':
-        print(request.form['name'])
+        # Same name is not allowed
+        for item in catalog_items:
+            if item.name == request.form['name']:
+                return render_template('newItem.html',
+                                       catalog_name=catalog_name,
+                                       username=login_session.get('username'),
+                                       error_messages='Same item already existed')
+        # Empty form not allowed
         if (request.form['name']=='') or (request.form['description']==''):
             return render_template('newItem.html',
                                    catalog_name=catalog_name,
                                    username=login_session.get('username'),
                                    error_messages='Input can not be empty.')
+        # Generate the new item
         else:
             newItem = Item(
                 name=request.form['name'],
