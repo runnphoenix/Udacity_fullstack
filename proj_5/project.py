@@ -209,8 +209,10 @@ def catalogsJSON():
 @app.route('/')
 def showCatalogs():
     catalogs = session.query(Catalog).order_by(asc(Catalog.name))
+    recent_items = session.query(Item).order_by(Item.date_created.desc()).limit(catalogs.count()).all()
     return render_template('catalogs.html',
                            catalogs=catalogs,
+                           items=recent_items,
                            username=login_session.get('username'))
 
 
@@ -302,9 +304,19 @@ def showCatalog(catalog_name):
 
 ###########################  ITEMS  ############################################
 
+# Show a item
+@app.route('/catalog/<catalog_name>/<item_name>',methods=['GET', 'POST'])
+def showItem(catalog_name, item_name):
+    catalog = session.query(Catalog).filter_by(name=catalog_name).one()
+    item = session.query(Item).filter_by(name=item_name).filter_by(catalog=catalog).one()
+    if request.method == 'POST':
+        return
+    else:
+        return render_template('item.html', item=item)
+
+
 # Create a new item
-@app.route('/catalog/<catalog_name>/new/',
-           methods=['GET', 'POST'])
+@app.route('/catalog/<catalog_name>/new/', methods=['GET', 'POST'])
 def newItem(catalog_name):
     if 'username' not in login_session:
         return redirect('/login')
