@@ -315,8 +315,8 @@ def showItem(catalog_name, item_name):
         name=item_name).filter_by(
         catalog=catalog).one()
     return render_template('item.html',
-                               item=item,
-                               user_id=login_session.get('user_id'))
+                           item=item,
+                           user_id=login_session.get('user_id'))
 
 
 # Create a new item
@@ -350,6 +350,7 @@ def newItem():
                 description=request.form['description'],
                 catalog_id=catalog.id,
                 user_id=catalog.user_id,
+                #user_id=10,
                 image=request.form['image'])
             session.add(newItem)
             session.commit()
@@ -374,6 +375,13 @@ def editItem(catalog_name, item_name):
     editedItem = session.query(Item).filter_by(
         name=item_name).filter_by(
         catalog=catalog).one()
+
+    # Only owner can edit item
+    if login_session.get('user_id') != editedItem.user_id:
+        return redirect(url_for('showItem',
+                                catalog_name=catalog_name,
+                                item_name=item_name))
+
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
@@ -406,6 +414,13 @@ def deleteItem(catalog_name, item_name):
     itemToDelete = session.query(Item).filter_by(
         name=item_name).filter_by(
         catalog=catalog).one()
+
+    # Only owner can edit item
+    if login_session.get('user_id') != itemToDelete.user_id:
+        return redirect(url_for('showItem',
+                                catalog_name=catalog_name,
+                                item_name=item_name))
+
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
