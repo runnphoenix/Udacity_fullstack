@@ -33,10 +33,9 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+
 # Create a state token to prevent request forgery.
 # Store it in the session for later validation.
-
-
 @app.route('/login')
 def showLogin():
     state = ''.join(
