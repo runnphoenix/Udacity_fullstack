@@ -308,16 +308,13 @@ def showCatalog(catalog_name):
 
 
 # Show an item
-@app.route('/catalog/<catalog_name>/<item_name>', methods=['GET', 'POST'])
+@app.route('/catalog/<catalog_name>/<item_name>')
 def showItem(catalog_name, item_name):
     catalog = session.query(Catalog).filter_by(name=catalog_name).one()
     item = session.query(Item).filter_by(
         name=item_name).filter_by(
         catalog=catalog).one()
-    if request.method == 'POST':
-        return
-    else:
-        return render_template('item.html',
+    return render_template('item.html',
                                item=item,
                                user_id=login_session.get('user_id'))
 
@@ -331,7 +328,6 @@ def newItem():
     catalogs = session.query(Catalog).all()
     if request.method == 'POST':
         catalog_name = request.form['categories']
-        print(catalog_name)
         catalog = session.query(Catalog).filter_by(name=catalog_name).one()
         catalog_items = session.query(Item).filter_by(catalog=catalog)
         # Same name is not allowed
@@ -342,7 +338,7 @@ def newItem():
                                        user_id=login_session.get('user_id'),
                                        error_messages='Same item existed')
         # Empty form not allowed
-        if (request.form['name'] == '') or (request.form['description'] == ''):
+        if (request.form['name'] == '') or (request.form['description'] == '') or (request.form['image'] == ''):
             return render_template('newItem.html',
                                    catalogs=catalogs,
                                    user_id=login_session.get('user_id'),
@@ -353,7 +349,8 @@ def newItem():
                 name=request.form['name'],
                 description=request.form['description'],
                 catalog_id=catalog.id,
-                user_id=catalog.user_id)
+                user_id=catalog.user_id,
+                image=request.form['image'])
             session.add(newItem)
             session.commit()
             flash('New Menu %s Item Successfully Created' % (newItem.name))
@@ -378,16 +375,14 @@ def editItem(catalog_name, item_name):
         name=item_name).filter_by(
         catalog=catalog).one()
     if request.method == 'POST':
-        print('post')
         if request.form['name']:
-            print('if1')
             editedItem.name = request.form['name']
         if request.form['description']:
             editedItem.description = request.form['description']
-        print(editedItem.name)
+        if request.form['image']:
+            editedItem.image = request.form['image']
         session.add(editedItem)
         session.commit()
-        print(editedItem.description)
         flash('Menu Item Successfully Edited')
         return redirect(url_for('showItem',
                                 catalog_name=catalog_name,
