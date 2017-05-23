@@ -307,7 +307,7 @@ def showCatalog(catalog_name):
                            user_id=login_session.get('user_id'))
 
 
-# Show a item
+# Show an item
 @app.route('/catalog/<catalog_name>/<item_name>', methods=['GET', 'POST'])
 def showItem(catalog_name, item_name):
     catalog = session.query(Catalog).filter_by(name=catalog_name).one()
@@ -366,7 +366,7 @@ def newItem():
                                user_id=login_session.get('user_id'))
 
 
-# Edit a item
+# Edit an item
 @app.route('/catalog/<catalog_name>/<item_name>/edit',
            methods=['GET', 'POST'])
 def editItem(catalog_name, item_name):
@@ -378,14 +378,20 @@ def editItem(catalog_name, item_name):
         name=item_name).filter_by(
         catalog=catalog).one()
     if request.method == 'POST':
+        print('post')
         if request.form['name']:
+            print('if1')
             editedItem.name = request.form['name']
         if request.form['description']:
             editedItem.description = request.form['description']
+        print(editedItem.name)
         session.add(editedItem)
         session.commit()
+        print(editedItem.description)
         flash('Menu Item Successfully Edited')
-        return redirect(url_for('showCatalog', catalog_name=catalog_name))
+        return redirect(url_for('showItem',
+                                catalog_name=catalog_name,
+                                item_name=editedItem.name))
     else:
         return render_template('editItem.html',
                                catalog_name=catalog_name,
@@ -394,7 +400,7 @@ def editItem(catalog_name, item_name):
                                user_id=login_session.get('user_id'))
 
 
-# Delete a item
+# Delete an item
 @app.route('/catalog/<catalog_name>/<item_name>/delete',
            methods=['GET', 'POST'])
 def deleteItem(catalog_name, item_name):
