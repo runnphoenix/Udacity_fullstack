@@ -21,7 +21,7 @@
       {% if user_id != None %}
          <div><a href="{{url_for('newItem')}}">Add Item</a></div>
       {% endif %}
-      <h3>Items</h3>
+      <h3>Latest Items</h3>
       {% for item in items %}
         <a href="{{url_for('showItem', catalog_name=item.catalog.name, item_name=item.name)}}">
           <div style='color:red;'>{{item.name}}<span style='font-style:italic;color:gray;'> ({{item.catalog.name}})</span></div>

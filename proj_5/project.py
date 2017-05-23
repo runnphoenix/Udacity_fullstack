@@ -195,7 +195,9 @@ def catalogMenuJSON(catalog_name):
 @app.route('/catalog/<catalog_name>/<item_name>.json')
 def ItemJSON(catalog_name, item_name):
     catalog = session.query(Catalog).filter_by(name=catalog_name).one()
-    ItemInfo = session.query(Item).filter_by(name=item_name).filter_by(catalog=catalog).one()
+    ItemInfo = session.query(Item).filter_by(
+        name=item_name).filter_by(
+        catalog=catalog).one()
     return jsonify(Item=ItemInfo.serialize)
 
 
@@ -209,7 +211,9 @@ def catalogsJSON():
 @app.route('/')
 def showCatalogs():
     catalogs = session.query(Catalog).order_by(asc(Catalog.name))
-    recent_items = session.query(Item).order_by(Item.date_created.desc()).limit(catalogs.count()).all()
+    recent_items = session.query(Item).order_by(
+        Item.date_created.desc()).limit(
+        catalogs.count()).all()
     return render_template('catalogs.html',
                            catalogs=catalogs,
                            items=recent_items,
@@ -293,7 +297,7 @@ def deleteCatalog(catalog_name):
 # Show a catalog
 @app.route('/catalog/<catalog_name>/')
 def showCatalog(catalog_name):
-    catalogs = session.query(Catalog).all()
+    catalogs = session.query(Catalog).order_by(asc(Catalog.name))
     catalog = session.query(Catalog).filter_by(name=catalog_name).one()
     items = session.query(Item).filter_by(
         catalog=catalog).order_by(Item.date_created.desc()).all()
@@ -304,13 +308,13 @@ def showCatalog(catalog_name):
                            user_id=login_session.get('user_id'))
 
 
-###########################  ITEMS  ############################################
-
 # Show a item
-@app.route('/catalog/<catalog_name>/<item_name>',methods=['GET', 'POST'])
+@app.route('/catalog/<catalog_name>/<item_name>', methods=['GET', 'POST'])
 def showItem(catalog_name, item_name):
     catalog = session.query(Catalog).filter_by(name=catalog_name).one()
-    item = session.query(Item).filter_by(name=item_name).filter_by(catalog=catalog).one()
+    item = session.query(Item).filter_by(
+        name=item_name).filter_by(
+        catalog=catalog).one()
     if request.method == 'POST':
         return
     else:
@@ -337,9 +341,9 @@ def newItem():
                 return render_template('newItem.html',
                                        catalogs=catalogs,
                                        user_id=login_session.get('user_id'),
-                                       error_messages='Same item already existed')
+                                       error_messages='Same item existed')
         # Empty form not allowed
-        if (request.form['name']=='') or (request.form['description']==''):
+        if (request.form['name'] == '') or (request.form['description'] == ''):
             return render_template('newItem.html',
                                    catalogs=catalogs,
                                    user_id=login_session.get('user_id'),
@@ -356,7 +360,7 @@ def newItem():
             flash('New Menu %s Item Successfully Created' % (newItem.name))
             return redirect(url_for('showItem',
                                     catalog_name=catalog.name,
-                                    item_name = newItem.name))
+                                    item_name=newItem.name))
     else:
         return render_template('newItem.html',
                                catalogs=catalogs,
@@ -371,7 +375,9 @@ def editItem(catalog_name, item_name):
         return redirect('/login')
 
     catalog = session.query(Catalog).filter_by(name=catalog_name).one()
-    editedItem = session.query(Item).filter_by(name=item_name).filter_by(catalog=catalog).one()
+    editedItem = session.query(Item).filter_by(
+        name=item_name).filter_by(
+        catalog=catalog).one()
     if request.method == 'POST':
         if request.form['name']:
             editedItem.name = request.form['name']
@@ -397,7 +403,9 @@ def deleteItem(catalog_name, item_name):
         return redirect('/login')
 
     catalog = session.query(Catalog).filter_by(name=catalog_name).one()
-    itemToDelete = session.query(Item).filter_by(name=item_name).filter_by(catalog=catalog).one()
+    itemToDelete = session.query(Item).filter_by(
+        name=item_name).filter_by(
+        catalog=catalog).one()
     if request.method == 'POST':
         session.delete(itemToDelete)
         session.commit()
