@@ -5,9 +5,6 @@
 <div class="row">
   <div class="col-md-10">
     <div class="col-md-3">
-      {% if user_id != None %}
-        <div><a href="{{url_for('newCatalog')}}">Add Catalog</a></div>
-      {% endif %}
       <h3>Categories</h3>
       {% for catalog in catalogs %}
 		    <a href = "{{url_for('showCatalog', catalog_name = catalog.name)}}">
