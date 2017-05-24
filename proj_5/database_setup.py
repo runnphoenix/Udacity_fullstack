@@ -38,7 +38,7 @@ class Item(Base):
 
     name = Column(String(80), nullable=False)
     id = Column(Integer, primary_key=True)
-    description = Column(String(250))
+    description = Column(String(1000))
     date_created = Column(DateTime(timezone=True), server_default=func.now())
     catalog_id = Column(Integer, ForeignKey('catalog.id'))
     catalog = relationship(Catalog)

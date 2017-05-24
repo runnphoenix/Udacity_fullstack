@@ -10,7 +10,7 @@
 <div class="row"> 
   <div class="col-md-11">
     <p>
-      <img src={{item.image}} width="200" height="200" align='right'>
+      <img src={{item.image}} style="max-width:300px;max-height:200px;" align='right'>
       {{item.description}}
     </p>
 
@@ -25,11 +25,5 @@
    <a style='color:red;' href='{{url_for('deleteItem', catalog_name=item.catalog.name, item_name=item.name)}}'>Delete</a>
  </div>
 {% endif %}
-
-
-{% if error_messages %}
-  <div>{{error_messages}}</div>
-{% endif %}
-
 
 {% endblock %}
