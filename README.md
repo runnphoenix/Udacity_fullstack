@@ -18,7 +18,16 @@ In order to run this project, you should have `PostgreSql` and `Python` installe
 
 Test this project by running `python tournament_test.py` in terminal once you have finished the previous step.
 
++ *Project 5 - Item Catalog* 
+
+Use the virtual machine Udacity provides, see more installation instructions [here](https://classroom.udacity.com/nanodegrees/nd004/parts/0041345405/modules/353202897075460/lessons/3423258756/concepts/14c72fe3-e3fe-4959-9c4b-467cf5b7c3a0#).
+
+In order to run this project, enter the `/vagrant` directory in your virutal machine and run `python project.py` in command line. Then open a web browser in: host machine and go to page `http://localhost:5000`. 
+
+If you need to rebuild the database, remove the current database file `items.db` first, then run `python database_setup.py` and `python lotsofitems.py`.
+
 ## History
 + Added Project_1  2016-12-05
 + Added Project_2  2016-12-20
 + Added Project_4  2017-03-10
++ Added project_5  2017-05-23
