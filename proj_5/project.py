@@ -229,8 +229,7 @@ def showCatalogs():
         catalogs.count()).all()
     return render_template('catalogs.html',
                            catalogs=catalogs,
-                           items=recent_items,
-                           user_id=login_session.get('user_id'))
+                           items=recent_items)
 
 
 # Show a catalog
@@ -244,8 +243,7 @@ def showCatalog(catalog_name):
         return render_template('catalog.html',
                                catalogs=catalogs,
                                items=items,
-                               catalog=catalog,
-                               user_id=login_session.get('user_id'))
+                               catalog=catalog)
     except:
         # If error occurs, for example, catalog name not exists
         flash('Previous request not valid.')
@@ -261,8 +259,7 @@ def showItem(catalog_name, item_name):
             name=item_name).filter_by(
             catalog=catalog).one()
         return render_template('item.html',
-                               item=item,
-                               user_id=login_session.get('user_id'))
+                               item=item)
     except:
         flash('Previous request not valid.')
         return redirect(url_for('showCatalogs'))
@@ -282,14 +279,12 @@ def newItem():
             if item.name == request.form['name']:
                 return render_template('newItem.html',
                                        catalogs=catalogs,
-                                       user_id=login_session.get('user_id'),
                                        error_messages='Same item existed')
         # Empty form not allowed
         if (request.form['name'] == '') or (request.form[
                 'description'] == '') or (request.form['image'] == ''):
             return render_template('newItem.html',
                                    catalogs=catalogs,
-                                   user_id=login_session.get('user_id'),
                                    error_messages='Input can not be empty.')
         # Generate the new item
         else:
@@ -308,8 +303,7 @@ def newItem():
                                     item_name=newItem.name))
     else:
         return render_template('newItem.html',
-                               catalogs=catalogs,
-                               user_id=login_session.get('user_id'))
+                               catalogs=catalogs)
 
 
 # Edit an item
@@ -345,8 +339,7 @@ def editItem(catalog_name, item_name):
         return render_template('editItem.html',
                                catalog_name=catalog_name,
                                item_name=item_name,
-                               item=editedItem,
-                               user_id=login_session.get('user_id'))
+                               item=editedItem)
 
 
 # Delete an item
@@ -373,8 +366,7 @@ def deleteItem(catalog_name, item_name):
     else:
         return render_template('deleteItem.html',
                                item=itemToDelete,
-                               catalog_name=catalog_name,
-                               user_id=login_session.get('user_id'))
+                               catalog_name=catalog_name)
 
 
 if __name__ == '__main__':

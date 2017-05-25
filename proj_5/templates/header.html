@@ -5,7 +5,7 @@
 		</a>
 	</div>
 	<div class="col-md-6 text-right">
-    {% if user_id == None %}
+    {% if 'user_name' not in session %}
       <a href="{{url_for('showLogin')}}">Login</a>
     {% else %}
       <a href="{{url_for('gdisconnect')}}">Logout</a>
