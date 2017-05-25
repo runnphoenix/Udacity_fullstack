@@ -184,6 +184,7 @@ def getUserID(email):
     except:
         return None
 
+
 # Login Decorator
 def login_required(func):
     @wraps(func)
@@ -235,27 +236,36 @@ def showCatalogs():
 # Show a catalog
 @app.route('/catalog/<catalog_name>/')
 def showCatalog(catalog_name):
-    catalogs = session.query(Catalog).order_by(asc(Catalog.name))
-    catalog = session.query(Catalog).filter_by(name=catalog_name).one()
-    items = session.query(Item).filter_by(
-        catalog=catalog).order_by(Item.date_created.desc()).all()
-    return render_template('catalog.html',
-                           catalogs=catalogs,
-                           items=items,
-                           catalog=catalog,
-                           user_id=login_session.get('user_id'))
+    try:
+        catalogs = session.query(Catalog).order_by(asc(Catalog.name))
+        catalog = session.query(Catalog).filter_by(name=catalog_name).one()
+        items = session.query(Item).filter_by(
+            catalog=catalog).order_by(Item.date_created.desc()).all()
+        return render_template('catalog.html',
+                               catalogs=catalogs,
+                               items=items,
+                               catalog=catalog,
+                               user_id=login_session.get('user_id'))
+    except:
+        # If error occurs, for example, catalog name not exists
+        flash('Previous request not valid.')
+        return redirect(url_for('showCatalogs'))
 
 
 # Show an item
 @app.route('/catalog/<catalog_name>/<item_name>')
 def showItem(catalog_name, item_name):
-    catalog = session.query(Catalog).filter_by(name=catalog_name).one()
-    item = session.query(Item).filter_by(
-        name=item_name).filter_by(
-        catalog=catalog).one()
-    return render_template('item.html',
-                           item=item,
-                           user_id=login_session.get('user_id'))
+    try:
+        catalog = session.query(Catalog).filter_by(name=catalog_name).one()
+        item = session.query(Item).filter_by(
+            name=item_name).filter_by(
+            catalog=catalog).one()
+        return render_template('item.html',
+                               item=item,
+                               user_id=login_session.get('user_id'))
+    except:
+        flash('Previous request not valid.')
+        return redirect(url_for('showCatalogs'))
 
 
 # Create a new item
