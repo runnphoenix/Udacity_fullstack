@@ -91,7 +91,7 @@ def gconnect():
         response.headers['Content-Type'] = 'application/json'
 
     # store the access token in the session for later use.
-    login_session['credentials'] = credentials
+    login_session['credentials'] = credentials.access_token
     login_session['gplus_id'] = gplus_id
 
     # get user info
@@ -100,7 +100,7 @@ def gconnect():
     answer = requests.get(userinfo_url, params=params)
     data = json.loads(answer.text)
 
-    login_session['user_id'] = data['name']
+    login_session['user_name'] = data['name']
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
@@ -112,7 +112,7 @@ def gconnect():
 
     output = ''
     output += '<h1>Welcome, '
-    output += login_session['user_id']
+    output += login_session['user_name']
     output += '!</h1>'
 
     output += '<img src="'
@@ -120,7 +120,7 @@ def gconnect():
     output += '"style = "width: 300px; height: 300px; border-radius:150px;'
     output += ' -webkit-border-radius: 150px;-moz-border-radisu: 150px;"> '
 
-    flash("you are now logged in as %s" % login_session['user_id'])
+    flash("you are now logged in as %s" % login_session['user_name'])
     return output
 
 
@@ -135,7 +135,7 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     # Revoke current token
-    access_token = credentials.access_token
+    access_token = credentials
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
     result = httplib2.Http().request(url, 'GET')[0]
 
@@ -143,7 +143,7 @@ def gdisconnect():
         # reset the user's session:
         del login_session['credentials']
         del login_session['gplus_id']
-        del login_session['user_id']
+        del login_session['user_name']
         del login_session['email']
         del login_session['picture']
 
@@ -160,7 +160,7 @@ def gdisconnect():
 
 def createUser(login_session):
     newUser = User(
-        name=login_session['user_id'],
+        name=login_session['user_name'],
         email=login_session['email'],
         picture=login_session['picture'])
     session.add(newUser)
@@ -208,6 +208,7 @@ def catalogsJSON():
 
 # Show all catalogs
 @app.route('/')
+@app.route('/catalog')
 def showCatalogs():
     catalogs = session.query(Catalog).order_by(asc(Catalog.name))
     recent_items = session.query(Item).order_by(
@@ -264,7 +265,8 @@ def newItem():
                                        user_id=login_session.get('user_id'),
                                        error_messages='Same item existed')
         # Empty form not allowed
-        if (request.form['name'] == '') or (request.form['description'] == '') or (request.form['image'] == ''):
+        if (request.form['name'] == '') or (request.form[
+                'description'] == '') or (request.form['image'] == ''):
             return render_template('newItem.html',
                                    catalogs=catalogs,
                                    user_id=login_session.get('user_id'),
@@ -276,7 +278,7 @@ def newItem():
                 description=request.form['description'],
                 catalog_id=catalog.id,
                 user_id=catalog.user_id,
-                #user_id=10,
+                # user_id=10,
                 image=request.form['image'])
             session.add(newItem)
             session.commit()

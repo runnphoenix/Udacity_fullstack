@@ -56,18 +56,18 @@ session.add(Football)
 session.commit()
 
 Kit = Item(name="Soccer Kit",
-                 description="In association football, kit (also referred to as strip or soccer uniform) is the standard equipment and attire worn by players. The sport's Laws of the Game specify the minimum kit which a player must use, and also prohibit the use of anything that is dangerous to either the player or another participant. Individual competitions may stipulate further restrictions, such as regulating the size of logos displayed on shirts and stating that, in the event of a match between teams with identical or similar colours, the away team must change to different coloured attire.",
-                 catalog_id=2,
-                 user_id=1,
-                 image="https://ae01.alicdn.com/kf/HTB18amsPVXXXXbIXXXXq6xXFXXXm/new-men-plate-football-clothes-Training-Games-men-s-font-b-soccer-b-font-jerseys-adult.jpg")
+           description="In association football, kit (also referred to as strip or soccer uniform) is the standard equipment and attire worn by players. The sport's Laws of the Game specify the minimum kit which a player must use, and also prohibit the use of anything that is dangerous to either the player or another participant. Individual competitions may stipulate further restrictions, such as regulating the size of logos displayed on shirts and stating that, in the event of a match between teams with identical or similar colours, the away team must change to different coloured attire.",
+           catalog_id=2,
+           user_id=1,
+           image="https://ae01.alicdn.com/kf/HTB18amsPVXXXXbIXXXXq6xXFXXXm/new-men-plate-football-clothes-Training-Games-men-s-font-b-soccer-b-font-jerseys-adult.jpg")
 session.add(Kit)
 session.commit()
 
 Card = Item(name="Penalty Card",
-             description='A penalty card is used in many sports as a means of warning, reprimanding or penalising a player, coach or team official. Penalty cards are most commonly used by referees or umpires to indicate that a player has committed an offense. The referee will hold the card above his or her head while looking or pointing towards the player that has committed the offense. The colour and/or shape of the card used by the official indicates the type or seriousness of the offence and the level of punishment that is to be applied.',
-             catalog_id=2,
-             user_id=1,
-             image="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Yellow_card.svg/200px-Yellow_card.svg.png")
+            description='A penalty card is used in many sports as a means of warning, reprimanding or penalising a player, coach or team official. Penalty cards are most commonly used by referees or umpires to indicate that a player has committed an offense. The referee will hold the card above his or her head while looking or pointing towards the player that has committed the offense. The colour and/or shape of the card used by the official indicates the type or seriousness of the offence and the level of punishment that is to be applied.',
+            catalog_id=2,
+            user_id=1,
+            image="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Yellow_card.svg/200px-Yellow_card.svg.png")
 session.add(Card)
 session.commit()
 
@@ -144,4 +144,3 @@ Puck = Item(name="Hockey Puck",
             image="https://images-na.ssl-images-amazon.com/images/I/419fcN-UGlL._SX355_.jpg")
 session.add(Puck)
 session.commit()
-
