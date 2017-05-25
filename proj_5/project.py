@@ -5,6 +5,8 @@ from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Catalog, Item, User
 
+from functools import wraps
+
 # Login Session
 from flask import session as login_session
 import random
@@ -146,6 +148,7 @@ def gdisconnect():
         del login_session['user_name']
         del login_session['email']
         del login_session['picture']
+        del login_session['user_id']
 
         response = make_response(json.dumps('Successfully disconnected'), 200)
         response.headers['Content-Type'] = 'application/json'
@@ -180,6 +183,15 @@ def getUserID(email):
         return user.id
     except:
         return None
+
+# Login Decorator
+def login_required(func):
+    @wraps(func)
+    def decorated_function(*args, **kwargs):
+        if 'user_name' not in login_session:
+            return redirect('/login')
+        return func(*args, **kwargs)
+    return decorated_function
 
 
 # JSON APIs to view Catalog Information
@@ -248,10 +260,8 @@ def showItem(catalog_name, item_name):
 
 # Create a new item
 @app.route('/catalog/item/new/', methods=['GET', 'POST'])
+@login_required
 def newItem():
-    if 'username' not in login_session:
-        return redirect('/login')
-
     catalogs = session.query(Catalog).all()
     if request.method == 'POST':
         catalog_name = request.form['categories']
@@ -295,10 +305,8 @@ def newItem():
 # Edit an item
 @app.route('/catalog/<catalog_name>/<item_name>/edit',
            methods=['GET', 'POST'])
+@login_required
 def editItem(catalog_name, item_name):
-    if 'username' not in login_session:
-        return redirect('/login')
-
     catalog = session.query(Catalog).filter_by(name=catalog_name).one()
     editedItem = session.query(Item).filter_by(
         name=item_name).filter_by(
@@ -334,10 +342,8 @@ def editItem(catalog_name, item_name):
 # Delete an item
 @app.route('/catalog/<catalog_name>/<item_name>/delete',
            methods=['GET', 'POST'])
+@login_required
 def deleteItem(catalog_name, item_name):
-    if 'username' not in login_session:
-        return redirect('/login')
-
     catalog = session.query(Catalog).filter_by(name=catalog_name).one()
     itemToDelete = session.query(Item).filter_by(
         name=item_name).filter_by(
