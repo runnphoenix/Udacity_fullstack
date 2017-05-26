@@ -15,7 +15,7 @@
 
           <ul data-bind="foreach: locations">
             <li>
-            <span data-bind="text: title"></span>
+            <span data-bind="text: title, click: $parent.highlightMarker"></span>
             </li>
           </ul>
 

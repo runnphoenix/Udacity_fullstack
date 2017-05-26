@@ -1,5 +1,16 @@
 var map;
 
+// These are the real estate listings that will be shown to the user.
+// Normally we'd have these in a database instead.
+var locations = [
+    {title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}},
+    {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}},
+    {title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}},
+    {title: 'East Village Hip Studio', location: {lat: 40.7281777, lng: -73.984377}},
+    {title: 'TriBeCa Artsy Bachelor Pad', location: {lat: 40.7195264, lng: -74.0089934}},
+    {title: 'Chinatown Homey Space', location: {lat: 40.7180628, lng: -73.9961237}}
+];
+
 // Create a new blank array for all the listing markers.
 var markers = [];
 
@@ -11,15 +22,34 @@ var polygon = null;
 var placeMarkers = [];
 
 
+var defaultIconColor = '0091ff';
+var highlightedIconColor = 'FFFF24';
+
+
 function viewModel() {
-  this.locations = ko.observableArray( [
-        {title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}},
-        {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}},
-        {title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}},
-        {title: 'East Village Hip Studio', location: {lat: 40.7281777, lng: -73.984377}},
-        {title: 'TriBeCa Artsy Bachelor Pad', location: {lat: 40.7195264, lng: -74.0089934}},
-        {title: 'Chinatown Homey Space', location: {lat: 40.7180628, lng: -73.9961237}}
-    ]);
+    var self = this;
+
+    // Import locations
+    this.locationList = ko.observableArray([]);
+    locations.forEach(function(location){
+        self.locationList.push(location);
+    });
+    
+    // Highlight a Marker
+    this.highlightMarker = function() {
+        for (var i=0; i<markers.length; i++) {
+            marker = markers[i];
+            if (marker.title == this.title){
+                // Highlight this markerimage
+                marker.setIcon(makeMarkerIcon(highlightedIconColor));
+            }else{
+                // Unhighlight
+                marker.setIcon(makeMarkerIcon(defaultIconColor));
+
+            }
+        }
+    };
+
 }
 ko.applyBindings(new viewModel());
 
@@ -46,25 +76,14 @@ function initMap() {
     // Bias the searchbox to within the bounds of the map.
     searchBox.setBounds(map.getBounds());
 
-    // These are the real estate listings that will be shown to the user.
-    // Normally we'd have these in a database instead.
-    var locations = [
-        {title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}},
-        {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}},
-        {title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}},
-        {title: 'East Village Hip Studio', location: {lat: 40.7281777, lng: -73.984377}},
-        {title: 'TriBeCa Artsy Bachelor Pad', location: {lat: 40.7195264, lng: -74.0089934}},
-        {title: 'Chinatown Homey Space', location: {lat: 40.7180628, lng: -73.9961237}}
-    ];
-
     var largeInfowindow = new google.maps.InfoWindow();
 
     // Style the markers a bit. This will be our listing marker icon.
-    var defaultIcon = makeMarkerIcon('0091ff');
+    var defaultIcon = makeMarkerIcon(defaultIconColor);
 
     // Create a "highlighted location" marker color for when the user
     // mouses over the marker.
-    var highlightedIcon = makeMarkerIcon('FFFF24');
+    var highlightedIcon = makeMarkerIcon(highlightedIconColor);
 
     var bounds = new google.maps.LatLngBounds();
 
