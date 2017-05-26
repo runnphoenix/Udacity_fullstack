@@ -2,9 +2,6 @@
 <html>
   <head>
     <link rel="stylesheet" href="static/style.css">
-    <script type="text/javascript" src="js/viewModel.js"></script>
-    <script type="text/javascript" src="js/knockout-3.4.2.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyCw5wyNOIlzra_Rv4RmIvwHjq0w6oK93vo&v=3&callback=initMap"></script>
   </head>
   <body>
     <div class="container">
@@ -14,9 +11,25 @@
           <span class="text">Search for nearby places</span>
           <input id="places-search" type="text" placeholder="Ex: Pizza delivery in NYC">
           <input id="go-places" type="button" value="Filter">
+
+
+          <ul data-bind="foreach: locations">
+            <li>
+            <span data-bind="text: title"></span>
+            </li>
+          </ul>
+
+
         </div>
       </div>
       <div id="map"></div>
     </div>
+    
+
+    <script type="text/javascript" src="js/knockout-3.4.2.js"></script>
+    <script type="text/javascript" src="js/viewModel.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyCw5wyNOIlzra_Rv4RmIvwHjq0w6oK93vo&v=3&callback=initMap"></script>
+
+
   </body>
 </html>
