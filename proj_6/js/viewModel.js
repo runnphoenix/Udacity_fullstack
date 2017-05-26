@@ -307,3 +307,17 @@ function getPlacesDetails(marker, infowindow) {
         }
     });
 }
+
+
+
+$(document).ready(function(){  
+    var isHiden = true; /*控制切换菜单*/  
+    $('#map').click(function(){  
+        if(isHiden){  
+            $('#map').animate({left:'-=362px'});//菜单块向右移动  
+        }else{  
+            $('#map').animate({left:'+=362px'}); //菜单块向左移动  
+        }  
+        isHiden = !isHiden;  
+    });  
+});
