@@ -53,6 +53,10 @@ function viewModel() {
             }
         }
     };
+
+    this.filterLocations = function() {
+        console.log('filter errrrrr.')
+    };
 }
 
 ko.applyBindings(new viewModel());
@@ -125,10 +129,6 @@ function initMap() {
     searchBox.addListener('places_changed', function() {
         searchBoxPlaces(this);
     });
-
-    // Listen for the event fired when the user selects a prediction and clicks
-    // "go" more details for that place.
-    document.getElementById('go-places').addEventListener('click', textSearchPlaces);
 }
 
 function resizeMap(){
@@ -214,21 +214,6 @@ function searchBoxPlaces(searchBox) {
     }
 }
 
-// This function firest when the user select "go" on the places search.
-// It will do a nearby search using the entered query string or place.
-function textSearchPlaces() {
-    var bounds = map.getBounds();
-    hideMarkers(placeMarkers);
-    var placesService = new google.maps.places.PlacesService(map);
-    placesService.textSearch({
-        query: document.getElementById('places-search').value,
-        bounds: bounds
-    }, function(results, status) {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-            createMarkersForPlaces(results);
-        }
-    });
-}
 
 // This function creates markers for each place found in either places search.
 function createMarkersForPlaces(places) {
