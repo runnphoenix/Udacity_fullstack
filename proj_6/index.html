@@ -9,9 +9,8 @@
         <div class="container">
             <!-- Left Menu -->
             <div class="options-box">
-                <h1>Find Your New NYC Home</h1>
+                <h3>Find Your New NYC Home</h3>
                 <div>
-                    <span class="text">Search for nearby places</span>
                     <input id="places-search" type="text" placeholder="Ex: Pizza delivery in NYC">
                     <input id="go-places" type="button" value="Filter">
                     <ul data-bind="foreach: locations">
@@ -22,6 +21,11 @@
                 </div>
             </div>
             <!-- Map -->
+            <div id="menuBar">
+                <a href="#menu" id="menu">
+                    &#9776;
+                </a>
+            </div>
             <div id="map"></div>
         </div>
     

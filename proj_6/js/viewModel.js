@@ -104,15 +104,15 @@ function initMap() {
         markers.push(marker);
         // Create an onclick event to open the large infowindow at each marker.
         marker.addListener('click', function() {
-        populateInfoWindow(this, largeInfowindow);
+            populateInfoWindow(this, largeInfowindow);
         });
         // Two event listeners - one for mouseover, one for mouseout,
         // to change the colors back and forth.
         marker.addListener('mouseover', function() {
-        this.setIcon(highlightedIcon);
+            this.setIcon(highlightedIcon);
         });
         marker.addListener('mouseout', function() {
-        this.setIcon(defaultIcon);
+            this.setIcon(defaultIcon);
         });
         marker.setMap(map);
         bounds.extend(marker.position);
@@ -129,6 +129,16 @@ function initMap() {
     // Listen for the event fired when the user selects a prediction and clicks
     // "go" more details for that place.
     document.getElementById('go-places').addEventListener('click', textSearchPlaces);
+}
+
+function resizeMap(){
+    var bounds = new google.maps.LatLngBounds();
+    for (var i = 0; i < markers.length; i++) {
+        var marker = markers[i];
+        marker.setMap(map);
+        bounds.extend(marker.position);
+    }
+    map.fitBounds(bounds);
 }
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
@@ -309,15 +319,18 @@ function getPlacesDetails(marker, infowindow) {
 }
 
 
-
 $(document).ready(function(){  
-    var isHiden = true; /*控制切换菜单*/  
-    $('#map').click(function(){  
-        if(isHiden){  
-            $('#map').animate({left:'-=362px'});//菜单块向右移动  
+    var isHiden = true;  
+    $('#menu').click(function(){
+        if(isHiden){
+            $('#map').animate({left:'-=320px'});
+            $('#menuBar').animate({left:'-=320px'});
         }else{  
-            $('#map').animate({left:'+=362px'}); //菜单块向左移动  
-        }  
-        isHiden = !isHiden;  
-    });  
+            $('#map').animate({left:'+=320px'});
+            $('#menuBar').animate({left:'+=320px'});
+        }
+        isHiden = !isHiden;
+        //TODO: Still not working.
+        resizeMap();
+    });
 });
