@@ -13,9 +13,9 @@
                 <div>
                     <input id="places-search" type="text" placeholder="Ex: Pizza delivery in NYC">
                     <input id="go-places" type="button" value="Filter">
-                    <ul data-bind="foreach: locations">
+                    <ul data-bind="foreach: locationList">
                         <li>
-                            <span data-bind="text: title, click: $parent.highlightMarker"></span>
+                            <a href='' data-bind="text: title, click: $parent.highlightMarker"></a>
                         </li>
                     </ul>
                 </div>

@@ -21,9 +21,7 @@ var polygon = null;
 // over the number of places that show.
 var placeMarkers = [];
 
-
-var defaultIconColor = '0091ff';
-var highlightedIconColor = 'FFFF24';
+var infoWindow;
 
 
 function viewModel() {
@@ -37,20 +35,26 @@ function viewModel() {
     
     // Highlight a Marker
     this.highlightMarker = function() {
+        if(infoWindow == null){
+            infoWindow = new google.maps.InfoWindow();
+        }
+
         for (var i=0; i<markers.length; i++) {
             marker = markers[i];
             if (marker.title == this.title){
-                // Highlight this markerimage
-                marker.setIcon(makeMarkerIcon(highlightedIconColor));
-            }else{
-                // Unhighlight
-                marker.setIcon(makeMarkerIcon(defaultIconColor));
-
+                // Animation
+                if (marker.getAnimation() !== null){
+                    marker.setAnimation(null);
+                }else{
+                    marker.setAnimation(google.maps.Animation.DROP);
+                }
+                // InfoWindow
+                populateInfoWindow(marker, infoWindow);
             }
         }
     };
-
 }
+
 ko.applyBindings(new viewModel());
 
 
@@ -76,16 +80,14 @@ function initMap() {
     // Bias the searchbox to within the bounds of the map.
     searchBox.setBounds(map.getBounds());
 
-    var largeInfowindow = new google.maps.InfoWindow();
-
     // Style the markers a bit. This will be our listing marker icon.
-    var defaultIcon = makeMarkerIcon(defaultIconColor);
-
-    // Create a "highlighted location" marker color for when the user
-    // mouses over the marker.
-    var highlightedIcon = makeMarkerIcon(highlightedIconColor);
+    var defaultIcon = makeMarkerIcon('0091ff');
 
     var bounds = new google.maps.LatLngBounds();
+    
+    if(infoWindow == null){
+        infoWindow = new google.maps.InfoWindow();
+    }
 
     // The following group uses the location array to create an array of markers on initialize.
     for (var i = 0; i < locations.length; i++) {
@@ -104,15 +106,13 @@ function initMap() {
         markers.push(marker);
         // Create an onclick event to open the large infowindow at each marker.
         marker.addListener('click', function() {
-            populateInfoWindow(this, largeInfowindow);
-        });
-        // Two event listeners - one for mouseover, one for mouseout,
-        // to change the colors back and forth.
-        marker.addListener('mouseover', function() {
-            this.setIcon(highlightedIcon);
-        });
-        marker.addListener('mouseout', function() {
-            this.setIcon(defaultIcon);
+            populateInfoWindow(this, infoWindow);
+            // Animation
+            if (this.getAnimation() !== null){
+                this.setAnimation(null);
+            }else{
+                this.setAnimation(google.maps.Animation.DROP);
+            }
         });
         marker.setMap(map);
         bounds.extend(marker.position);
