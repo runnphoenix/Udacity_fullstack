@@ -7,7 +7,7 @@ var locations = [
     {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}},
     {title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}},
     {title: 'East Village Hip Studio', location: {lat: 40.7281777, lng: -73.984377}},
-    {title: 'TriBeCa Artsy Bachelor Pad', location: {lat: 40.7195264, lng: -74.0089934}},
+    {title: 'Trump Tower', location: {lat: 40.744688, lng: -73.986116}},
     {title: 'Chinatown Homey Space', location: {lat: 40.7180628, lng: -73.9961237}}
 ];
 
@@ -22,7 +22,6 @@ var polygon = null;
 var placeMarkers = [];
 
 var infoWindow;
-
 
 function viewModel() {
     var self = this;
@@ -159,18 +158,25 @@ function populateInfoWindow(marker, infowindow) {
             infowindow.marker = null;
         });
 
+        infowindowContent = '<br>' + marker.title + '<br>';
+        infowindow.setContent(infowindowContent);
 
 	// Show Wikipedia Links                                    
         function getWikiLinks(mark) {
-			var url = mark.title.replace(/ /, '%20');
+			var url = mark.title.replace(/ /g, '%20');
             var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + url + '&format=json&callback=wikiCallback';
-			console.log(wikiUrl);                                     
 	    	$.ajax({
 				url: wikiUrl,
 				dataType: 'jsonp',
 				success: function(response){
 					var articleList = response[1];
-					console.log(articleList);
+					for (var i=0; i<articleList.length; i++) {
+                        articleString = articleList[i];
+                        var articleUrl = 'http://en.wikipedia.org/wiki/' + articleString.replace(/ /g, '%20');
+                        console.log(articleUrl);
+                        infowindowContent += ('<a href=' + articleUrl + '>' + articleString + '</a>' + '<br>');
+                    }
+                    infowindow.setContent(infowindowContent);
 				}
 	    	});
 		}
