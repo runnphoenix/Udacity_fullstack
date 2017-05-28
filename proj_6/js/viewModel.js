@@ -158,34 +158,26 @@ function populateInfoWindow(marker, infowindow) {
         infowindow.addListener('closeclick', function() {
             infowindow.marker = null;
         });
-        var streetViewService = new google.maps.StreetViewService();
-        var radius = 50;
-        // In case the status is OK, which means the pano was found, compute the
-        // position of the streetview image, then calculate the heading, then get a
-        // panorama from that and set the options
-        function getStreetView(data, status) {
-            if (status == google.maps.StreetViewStatus.OK) {
-                var nearStreetViewLocation = data.location.latLng;
-                var heading = google.maps.geometry.spherical.computeHeading(
-                nearStreetViewLocation, marker.position);
-                infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
-                var panoramaOptions = {
-                    position: nearStreetViewLocation,
-                    pov: {
-                    heading: heading,
-                    pitch: 30
-                    }
-                };
-                var panorama = new google.maps.StreetViewPanorama(
-                document.getElementById('pano'), panoramaOptions);
-            } else {
-                infowindow.setContent('<div>' + marker.title + '</div>' +
-                '<div>No Street View Found</div>');
-            }
-        }
-        // Use streetview service to get the closest streetview image within
-        // 50 meters of the markers position
-        streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
+
+
+	// Show Wikipedia Links                                    
+        function getWikiLinks(mark) {
+			var url = mark.title.replace(/ /, '%20');
+            var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + url + '&format=json&callback=wikiCallback';
+			console.log(wikiUrl);                                     
+	    	$.ajax({
+				url: wikiUrl,
+				dataType: 'jsonp',
+				success: function(response){
+					var articleList = response[1];
+					console.log(articleList);
+				}
+	    	});
+		}
+
+		getWikiLinks(marker);
+
+
         // Open the infowindow on the correct marker.
         infowindow.open(map, marker);
     }
