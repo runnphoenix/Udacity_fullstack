@@ -12,7 +12,7 @@
                 <h3>Find Your New NYC Home</h3>
                 <div>
                     <input id="places-search" type="text" placeholder="Ex: Pizza delivery in NYC">
-                    <input id="go-places" type="button" value="Filter" data-bind="click: filterLocations">
+                    <input type="button" value="Filter" data-bind="click: filterLocations">
                     <ul data-bind="foreach: locationList">
                         <li>
                             <a href='' data-bind="text: title, click: $parent.highlightMarker"></a>

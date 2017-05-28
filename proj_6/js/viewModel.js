@@ -55,7 +55,17 @@ function viewModel() {
     };
 
     this.filterLocations = function() {
-        console.log('filter errrrrr.')
+        var filterCondition = document.getElementById('places-search').value;
+	// 
+	var subArray = [];
+	for (var i=0; i<markers.length; i++){
+	    marker = markers[i];
+	    if (marker.title.indexOf(filterCondition) == -1) {
+		marker.setMap(null);
+	    }else{
+		marker.setMap(map);
+	    }
+	}
     };
 }
 
@@ -123,12 +133,6 @@ function initMap() {
     }
 
     map.fitBounds(bounds);
-
-    // Listen for the event fired when the user selects a prediction from the
-    // picklist and retrieve more details for that place.
-    searchBox.addListener('places_changed', function() {
-        searchBoxPlaces(this);
-    });
 }
 
 function resizeMap(){
@@ -200,20 +204,6 @@ function makeMarkerIcon(markerColor) {
         new google.maps.Size(21,34));
     return markerImage;
 }
-
-// This function fires when the user selects a searchbox picklist item.
-// It will do a nearby search using the selected query string or place.
-function searchBoxPlaces(searchBox) {
-    hideMarkers(placeMarkers);
-    var places = searchBox.getPlaces();
-    if (places.length == 0) {
-        window.alert('We did not find any places matching that search!');
-    } else {
-    // For each place, get the icon, name and location.
-        createMarkersForPlaces(places);
-    }
-}
-
 
 // This function creates markers for each place found in either places search.
 function createMarkersForPlaces(places) {
