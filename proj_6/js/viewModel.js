@@ -5,10 +5,10 @@ var map;
 var locations = [
     {title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}},
     {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}},
-    {title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}},
-    {title: 'East Village Hip Studio', location: {lat: 40.7281777, lng: -73.984377}},
+    {title: 'Museum of the City of New York', location: {lat: 40.78458, lng: -73.962957}},
+    {title: 'Rockefeller Center', location: {lat: 40.749744, lng: -73.979093}},
     {title: 'Trump Tower', location: {lat: 40.744688, lng: -73.986116}},
-    {title: 'Chinatown Homey Space', location: {lat: 40.7180628, lng: -73.9961237}}
+    {title: 'Whitney Museum of American Art', location: {lat: 40.744688, lng: -73.97539}}
 ];
 
 // Create a new blank array for all the listing markers.
@@ -173,7 +173,6 @@ function populateInfoWindow(marker, infowindow) {
 					for (var i=0; i<articleList.length; i++) {
                         articleString = articleList[i];
                         var articleUrl = 'http://en.wikipedia.org/wiki/' + articleString.replace(/ /g, '%20');
-                        console.log(articleUrl);
                         infowindowContent += ('<a href=' + articleUrl + '>' + articleString + '</a>' + '<br>');
                     }
                     infowindow.setContent(infowindowContent);
