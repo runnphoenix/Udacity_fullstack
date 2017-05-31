@@ -3,12 +3,12 @@ var map;
 // These are the real estate listings that will be shown to the user.
 // Normally we'd have these in a database instead.
 var locations = [
-    {title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}},
-    {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}},
-    {title: 'Museum of the City of New York', location: {lat: 40.78458, lng: -73.962957}},
-    {title: 'Rockefeller Center', location: {lat: 40.749744, lng: -73.979093}},
-    {title: 'Trump Tower', location: {lat: 40.744688, lng: -73.986116}},
-    {title: 'Whitney Museum of American Art', location: {lat: 40.744688, lng: -73.97539}}
+    {title: 'The Palace Museum', location: {lat: 39.9163447, lng: 116.3971546}},
+    {title: 'YuanMingYuan Park', location: {lat: 40.0080982, lng: 116.2982148}},
+    {title: 'National Stadium', location: {lat: 39.9929431, lng: 116.3965112}},
+    {title: 'Great Wall of Badaling', location: {lat: 40.3597596, lng: 116.0200204}},
+    {title: 'Tiananmen Square', location: {lat: 39.9054895, lng: 116.3976317}},
+    {title: 'CCTV Headequarters', location: {lat: 39.9152751, lng: 116.4642312}}
 ];
 
 // Create a new blank array for all the listing markers.
