@@ -1,7 +1,5 @@
+// Global variables
 var map;
-
-// These are the real estate listings that will be shown to the user.
-// Normally we'd have these in a database instead.
 var locations = [
     {title: 'Forbidden City', location: {lat: 39.9163447, lng: 116.3971546}},
     {title: 'Yuan Ming Yuan Park', location: {lat: 40.0080982, lng: 116.2982148}},
@@ -10,12 +8,10 @@ var locations = [
     {title: 'Tiananmen Square', location: {lat: 39.9054895, lng: 116.3976317}},
     {title: 'CCTV Headequarters', location: {lat: 39.9152751, lng: 116.4642312}}
 ];
-
-// Create a new blank array for all the listing markers.
 var markers = [];
-
 var infoWindow;
 
+//VM
 function viewModel() {
     var self = this;
 
@@ -67,6 +63,20 @@ function viewModel() {
         self.locationList.remove(function(item){
             return item.title.indexOf(self.filterCondition()) == -1;
         });
+    };
+
+    var isHidden = true;
+    this.toggleLeftPanel = function(){
+        if(isHidden){
+            $('#map').animate({left:'-=310px'});
+            $('#menuBar').animate({left:'-=310px'});
+        }else{  
+            $('#map').animate({left:'+=310px'});
+            $('#menuBar').animate({left:'+=310px'});
+        }
+        isHidden = !isHidden;
+        //TODO: Still not working.
+        resizeMap();
     };
 }
 
@@ -132,9 +142,7 @@ function resizeMap(){
     map.fitBounds(bounds);
 }
 
-// This function populates the infowindow when the marker is clicked. We'll only allow
-// one infowindow which will open at the marker that is clicked, and populate based
-// on that markers position.
+// This function populates the infowindow when the marker is clicked
 function populateInfoWindow(marker, infowindow) {
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker != marker) {
@@ -157,8 +165,6 @@ function populateInfoWindow(marker, infowindow) {
 }
 
 // This function takes in a COLOR, and then creates a new marker
-// icon of that color. The icon will be 21 px wide by 34 high, have an origin
-// of 0, 0 and be anchored at 10, 34).
 function makeMarkerIcon(markerColor) {
     var markerImage = new google.maps.MarkerImage(
         'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
@@ -174,6 +180,7 @@ function makeMarkerIcon(markerColor) {
 function getWikiLinks(mark, infowindow) {
 	var url = mark.title.replace(/ /g, '%20');
     var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + url + '&format=json&callback=wikiCallback';
+    //TODO: error handling
 	$.ajax({
 		url: wikiUrl,
 		dataType: 'jsonp',
@@ -190,19 +197,3 @@ function getWikiLinks(mark, infowindow) {
 	});
 }
 
-// Hamburger Menu Function
-$(document).ready(function(){  
-    var isHiden = true;  
-    $('#menu').click(function(){
-        if(isHiden){
-            $('#map').animate({left:'-=310px'});
-            $('#menuBar').animate({left:'-=320px'});
-        }else{  
-            $('#map').animate({left:'+=310px'});
-            $('#menuBar').animate({left:'+=320px'});
-        }
-        isHiden = !isHiden;
-        //TODO: Still not working.
-        resizeMap();
-    });
-});
