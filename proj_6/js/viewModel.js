@@ -14,13 +14,6 @@ var locations = [
 // Create a new blank array for all the listing markers.
 var markers = [];
 
-// This global polygon variable is to ensure only ONE polygon is rendered.
-var polygon = null;
-
-// Create placemarkers array to use in multiple functions to have control
-// over the number of places that show.
-var placeMarkers = [];
-
 var infoWindow;
 
 function viewModel() {
@@ -55,7 +48,7 @@ function viewModel() {
 
     // Filter function
     this.filterLocations = function() {
-        var filterCondition = document.getElementById('places-search').value;
+        var filterCondition = document.getElementById('places-filter').value;
 	    // 
 	    for (var i=0; i<markers.length; i++){
 	        marker = markers[i];
@@ -148,7 +141,7 @@ function populateInfoWindow(marker, infowindow) {
         // Clear the infowindow content to give the streetview time to load.
         infowindow.setContent('');
         infowindow.marker = marker;
-        // Make sure the marker property is cleared if the infowindow is closed.
+        // Make sure the marker property is cleared if the info window is closed.
         infowindow.addListener('closeclick', function() {
             infowindow.marker = null;
         });
@@ -156,7 +149,7 @@ function populateInfoWindow(marker, infowindow) {
         infowindowContent = '<br>' + marker.title + '<br>';
         infowindow.setContent(infowindowContent);
 
-		getWikiLinks(marker);
+		getWikiLinks(marker, infowindow);
 
         // Open the infowindow on the correct marker.
         infowindow.open(map, marker);
@@ -176,14 +169,16 @@ function makeMarkerIcon(markerColor) {
         new google.maps.Size(21,34));
     return markerImage;
 }
+
 // Show Wikipedia Links                                    
-function getWikiLinks(mark) {
+function getWikiLinks(mark, infowindow) {
 	var url = mark.title.replace(/ /g, '%20');
     var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + url + '&format=json&callback=wikiCallback';
 	$.ajax({
 		url: wikiUrl,
 		dataType: 'jsonp',
 		success: function(response){
+            infowindowContent += ('<br>' + 'Wikipedia Links:' + '<br>');
 			var articleList = response[1];
 			for (var i=0; i<articleList.length; i++) {
                 articleString = articleList[i];
@@ -195,14 +190,15 @@ function getWikiLinks(mark) {
 	});
 }
 
+// Hamburger Menu Function
 $(document).ready(function(){  
     var isHiden = true;  
     $('#menu').click(function(){
         if(isHiden){
-            $('#map').animate({left:'-=320px'});
+            $('#map').animate({left:'-=310px'});
             $('#menuBar').animate({left:'-=320px'});
         }else{  
-            $('#map').animate({left:'+=320px'});
+            $('#map').animate({left:'+=310px'});
             $('#menuBar').animate({left:'+=320px'});
         }
         isHiden = !isHiden;
