@@ -10,7 +10,7 @@
         <div class="options-box">
             <h3>Landmarks of Beijing</h3>
             <div>
-                <input id="places-filter" type="text" placeholder="Ex: Forbidden City">
+                <input id="places-filter" type="text" placeholder="Ex: Forbidden City" data-bind="textInput: filterCondition">
                 <input type="button" value="Filter" data-bind="click: filterLocations">
                 <ul data-bind="foreach: locationList">
                     <li>

@@ -19,6 +19,8 @@ var infoWindow;
 function viewModel() {
     var self = this;
 
+    this.filterCondition = ko.observable('');
+
     // Import locations
     this.locationList = ko.observableArray([]);
     locations.forEach(function(location){
@@ -48,11 +50,9 @@ function viewModel() {
 
     // Filter function
     this.filterLocations = function() {
-        var filterCondition = document.getElementById('places-filter').value;
-	    // 
 	    for (var i=0; i<markers.length; i++){
 	        marker = markers[i];
-	        if (marker.title.indexOf(filterCondition) == -1) {
+	        if (marker.title.indexOf(self.filterCondition()) == -1) {
 		        marker.setMap(null);
 	        }else{
 		        marker.setMap(map);
@@ -65,7 +65,7 @@ function viewModel() {
             self.locationList.push(location);
         });
         self.locationList.remove(function(item){
-            return item.title.indexOf(filterCondition) == -1;
+            return item.title.indexOf(self.filterCondition()) == -1;
         });
     };
 }
