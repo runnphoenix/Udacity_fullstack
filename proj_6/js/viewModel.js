@@ -1,30 +1,21 @@
+// Global variables
 var map;
-
-// These are the real estate listings that will be shown to the user.
-// Normally we'd have these in a database instead.
 var locations = [
-    {title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}},
-    {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}},
-    {title: 'Museum of the City of New York', location: {lat: 40.78458, lng: -73.962957}},
-    {title: 'Rockefeller Center', location: {lat: 40.749744, lng: -73.979093}},
-    {title: 'Trump Tower', location: {lat: 40.744688, lng: -73.986116}},
-    {title: 'Whitney Museum of American Art', location: {lat: 40.744688, lng: -73.97539}}
+    {title: 'Forbidden City', location: {lat: 39.9163447, lng: 116.3971546}},
+    {title: 'Yuan Ming Yuan Park', location: {lat: 40.0080982, lng: 116.2982148}},
+    {title: 'Beijing National Stadium', location: {lat: 39.9929431, lng: 116.3965112}},
+    {title: 'The Great Wall of China', location: {lat: 40.3597596, lng: 116.0200204}},
+    {title: 'Tiananmen Square', location: {lat: 39.9054895, lng: 116.3976317}},
+    {title: 'CCTV Headequarters', location: {lat: 39.9152751, lng: 116.4642312}}
 ];
-
-// Create a new blank array for all the listing markers.
 var markers = [];
-
-// This global polygon variable is to ensure only ONE polygon is rendered.
-var polygon = null;
-
-// Create placemarkers array to use in multiple functions to have control
-// over the number of places that show.
-var placeMarkers = [];
-
 var infoWindow;
 
+//VM
 function viewModel() {
     var self = this;
+
+    this.filterCondition = ko.observable('');
 
     // Import locations
     this.locationList = ko.observableArray([]);
@@ -53,18 +44,39 @@ function viewModel() {
         }
     };
 
+    // Filter function
     this.filterLocations = function() {
-        var filterCondition = document.getElementById('places-search').value;
-	// 
-	var subArray = [];
-	for (var i=0; i<markers.length; i++){
-	    marker = markers[i];
-	    if (marker.title.indexOf(filterCondition) == -1) {
-		marker.setMap(null);
-	    }else{
-		marker.setMap(map);
+	    for (var i=0; i<markers.length; i++){
+	        marker = markers[i];
+	        if (marker.title.indexOf(self.filterCondition()) == -1) {
+		        marker.setMap(null);
+	        }else{
+		        marker.setMap(map);
+	        }
 	    }
-	}
+        
+        //TODO: improve performance
+        self.locationList.removeAll();
+        locations.forEach(function(location){
+            self.locationList.push(location);
+        });
+        self.locationList.remove(function(item){
+            return item.title.indexOf(self.filterCondition()) == -1;
+        });
+    };
+
+    var isHidden = true;
+    this.toggleLeftPanel = function(){
+        if(isHidden){
+            $('#map').animate({left:'-=310px'});
+            $('#menuBar').animate({left:'-=310px'});
+        }else{  
+            $('#map').animate({left:'+=310px'});
+            $('#menuBar').animate({left:'+=310px'});
+        }
+        isHidden = !isHidden;
+        //TODO: Still not working.
+        resizeMap();
     };
 }
 
@@ -78,20 +90,6 @@ function initMap() {
         zoom: 13,
         mapTypeControl: false
     });
-
-    // This autocomplete is for use in the search within time entry box.
-    var timeAutocomplete = new google.maps.places.Autocomplete(
-        document.getElementById('search-within-time-text'));
-    // This autocomplete is for use in the geocoder entry box.
-    var zoomAutocomplete = new google.maps.places.Autocomplete(
-        document.getElementById('zoom-to-area-text'));
-    // Bias the boundaries within the map for the zoom to area text.
-    zoomAutocomplete.bindTo('bounds', map);
-    // Create a searchbox in order to execute a places search
-    var searchBox = new google.maps.places.SearchBox(
-        document.getElementById('places-search'));
-    // Bias the searchbox to within the bounds of the map.
-    searchBox.setBounds(map.getBounds());
 
     // Style the markers a bit. This will be our listing marker icon.
     var defaultIcon = makeMarkerIcon('0091ff');
@@ -144,16 +142,14 @@ function resizeMap(){
     map.fitBounds(bounds);
 }
 
-// This function populates the infowindow when the marker is clicked. We'll only allow
-// one infowindow which will open at the marker that is clicked, and populate based
-// on that markers position.
+// This function populates the infowindow when the marker is clicked
 function populateInfoWindow(marker, infowindow) {
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker != marker) {
         // Clear the infowindow content to give the streetview time to load.
         infowindow.setContent('');
         infowindow.marker = marker;
-        // Make sure the marker property is cleared if the infowindow is closed.
+        // Make sure the marker property is cleared if the info window is closed.
         infowindow.addListener('closeclick', function() {
             infowindow.marker = null;
         });
@@ -161,27 +157,7 @@ function populateInfoWindow(marker, infowindow) {
         infowindowContent = '<br>' + marker.title + '<br>';
         infowindow.setContent(infowindowContent);
 
-	// Show Wikipedia Links                                    
-        function getWikiLinks(mark) {
-			var url = mark.title.replace(/ /g, '%20');
-            var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + url + '&format=json&callback=wikiCallback';
-	    	$.ajax({
-				url: wikiUrl,
-				dataType: 'jsonp',
-				success: function(response){
-					var articleList = response[1];
-					for (var i=0; i<articleList.length; i++) {
-                        articleString = articleList[i];
-                        var articleUrl = 'http://en.wikipedia.org/wiki/' + articleString.replace(/ /g, '%20');
-                        infowindowContent += ('<a href=' + articleUrl + '>' + articleString + '</a>' + '<br>');
-                    }
-                    infowindow.setContent(infowindowContent);
-				}
-	    	});
-		}
-
-		getWikiLinks(marker);
-
+		getWikiLinks(marker, infowindow);
 
         // Open the infowindow on the correct marker.
         infowindow.open(map, marker);
@@ -189,8 +165,6 @@ function populateInfoWindow(marker, infowindow) {
 }
 
 // This function takes in a COLOR, and then creates a new marker
-// icon of that color. The icon will be 21 px wide by 34 high, have an origin
-// of 0, 0 and be anchored at 10, 34).
 function makeMarkerIcon(markerColor) {
     var markerImage = new google.maps.MarkerImage(
         'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
@@ -202,107 +176,24 @@ function makeMarkerIcon(markerColor) {
     return markerImage;
 }
 
-// This function creates markers for each place found in either places search.
-function createMarkersForPlaces(places) {
-    var bounds = new google.maps.LatLngBounds();
-    for (var i = 0; i < places.length; i++) {
-        var place = places[i];
-        var icon = {
-            url: place.icon,
-            size: new google.maps.Size(35, 35),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(15, 34),
-            scaledSize: new google.maps.Size(25, 25)
-        };
-        // Create a marker for each place.
-        var marker = new google.maps.Marker({
-            map: map,
-            icon: icon,
-            title: place.name,
-            position: place.geometry.location,
-            id: place.place_id
-        });
-        // Create a single infowindow to be used with the place details information
-        // so that only one is open at once.
-        var placeInfoWindow = new google.maps.InfoWindow();
-        // If a marker is clicked, do a place details search on it in the next function.
-        marker.addListener('click', function() {
-            if (placeInfoWindow.marker == this) {
-                console.log("This infowindow already is on this marker!");
-            } else {
-                getPlacesDetails(this, placeInfoWindow);
+// Show Wikipedia Links                                    
+function getWikiLinks(mark, infowindow) {
+	var url = mark.title.replace(/ /g, '%20');
+    var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + url + '&format=json&callback=wikiCallback';
+    //TODO: error handling
+	$.ajax({
+		url: wikiUrl,
+		dataType: 'jsonp',
+		success: function(response){
+            infowindowContent += ('<br>' + 'Wikipedia Links:' + '<br>');
+			var articleList = response[1];
+			for (var i=0; i<articleList.length; i++) {
+                articleString = articleList[i];
+                var articleUrl = 'http://en.wikipedia.org/wiki/' + articleString.replace(/ /g, '%20');
+                infowindowContent += ('<a href=' + articleUrl + '>' + articleString + '</a>' + '<br>');
             }
-        });
-        placeMarkers.push(marker);
-        if (place.geometry.viewport) {
-        // Only geocodes have viewport.
-            bounds.union(place.geometry.viewport);
-        } else {
-            bounds.extend(place.geometry.location);
-        }
-    }
-    map.fitBounds(bounds);
+            infowindow.setContent(infowindowContent);
+		}
+	});
 }
 
-// This is the PLACE DETAILS search - it's the most detailed so it's only
-// executed when a marker is selected, indicating the user wants more
-// details about that place.
-function getPlacesDetails(marker, infowindow) {
-    var service = new google.maps.places.PlacesService(map);
-    service.getDetails({
-        placeId: marker.id
-    }, function(place, status) {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-            // Set the marker property on this infowindow so it isn't created again.
-            infowindow.marker = marker;
-            var innerHTML = '<div>';
-            if (place.name) {
-                innerHTML += '<strong>' + place.name + '</strong>';
-            }
-            if (place.formatted_address) {
-                innerHTML += '<br>' + place.formatted_address;
-            }
-            if (place.formatted_phone_number) {
-                innerHTML += '<br>' + place.formatted_phone_number;
-            }
-            if (place.opening_hours) {
-            innerHTML += '<br><br><strong>Hours:</strong><br>' +
-                place.opening_hours.weekday_text[0] + '<br>' +
-                place.opening_hours.weekday_text[1] + '<br>' +
-                place.opening_hours.weekday_text[2] + '<br>' +
-                place.opening_hours.weekday_text[3] + '<br>' +
-                place.opening_hours.weekday_text[4] + '<br>' +
-                place.opening_hours.weekday_text[5] + '<br>' +
-                place.opening_hours.weekday_text[6];
-            }
-            if (place.photos) {
-                innerHTML += '<br><br><img src="' + place.photos[0].getUrl(
-                    {maxHeight: 100, maxWidth: 200}) + '">';
-            }
-            innerHTML += '</div>';
-            infowindow.setContent(innerHTML);
-            infowindow.open(map, marker);
-            // Make sure the marker property is cleared if the infowindow is closed.
-            infowindow.addListener('closeclick', function() {
-                infowindow.marker = null;
-            });
-        }
-    });
-}
-
-
-$(document).ready(function(){  
-    var isHiden = true;  
-    $('#menu').click(function(){
-        if(isHiden){
-            $('#map').animate({left:'-=320px'});
-            $('#menuBar').animate({left:'-=320px'});
-        }else{  
-            $('#map').animate({left:'+=320px'});
-            $('#menuBar').animate({left:'+=320px'});
-        }
-        isHiden = !isHiden;
-        //TODO: Still not working.
-        resizeMap();
-    });
-});

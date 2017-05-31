@@ -6,29 +6,27 @@
     </head>
 
     <body>
-        <div class="container">
-            <!-- Left Menu -->
-            <div class="options-box">
-                <h3>Find Your New NYC Home</h3>
-                <div>
-                    <input id="places-search" type="text" placeholder="Ex: Pizza delivery in NYC">
-                    <input type="button" value="Filter" data-bind="click: filterLocations">
-                    <ul data-bind="foreach: locationList">
-                        <li>
-                            <a href='' data-bind="text: title, click: $parent.highlightMarker"></a>
-                        </li>
-                    </ul>
-                </div>
+        <!-- Left Menu -->
+        <div class="options-box">
+            <h3>Landmarks of Beijing</h3>
+            <div>
+                <input id="places-filter" type="text" placeholder="Ex: Forbidden City" data-bind="textInput: filterCondition">
+                <input type="button" value="Filter" data-bind="click: filterLocations">
+                <ul data-bind="foreach: locationList">
+                    <li>
+                        <a href='' data-bind="text: title, click: $parent.highlightMarker"></a>
+                    </li>
+                </ul>
             </div>
-            <!-- Map -->
-            <div id="menuBar">
-                <a href="#menu" id="menu">
-                    &#9776;
-                </a>
-            </div>
-            <div id="map"></div>
         </div>
-    
+        <!-- Map -->
+        <div id="menuBar">
+            <a href="#menu" id="menu" data-bind="click: toggleLeftPanel">
+                &#9776;
+            </a>
+        </div>
+        <div id="map"></div>
+   
         <script type="text/javascript" src="js/knockout-3.4.2.js"></script>
         <script type="text/javascript" src="js/viewModel.js"></script>
         <script src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyCw5wyNOIlzra_Rv4RmIvwHjq0w6oK93vo&v=3&callback=initMap"></script>
