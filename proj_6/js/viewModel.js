@@ -10,8 +10,9 @@ var locations = [
 ];
 var markers = [];
 var infoWindow;
+var bounds;
 
-//VM
+// VM
 function viewModel() {
     var self = this;
 
@@ -23,7 +24,7 @@ function viewModel() {
         self.locationList.push(location);
     });
     
-    // Highlight a Marker
+    // Highlight a Marker & show infowindow
     this.highlightMarker = function() {
         if(infoWindow == null){
             infoWindow = new google.maps.InfoWindow();
@@ -65,6 +66,7 @@ function viewModel() {
         });
     };
 
+    // Toggle left menu
     var isHidden = true;
     this.toggleLeftPanel = function(){
         if(isHidden){
@@ -84,17 +86,13 @@ ko.applyBindings(new viewModel());
 
 
 function initMap() {
-    // Constructor creates a new map - only center and zoom are required.
     map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: 40.7413549, lng: -73.9980244},
+        center: {lat: 39.9929431, lng: 116.3965112},
         zoom: 13,
         mapTypeControl: false
     });
-
-    // Style the markers a bit. This will be our listing marker icon.
-    var defaultIcon = makeMarkerIcon('0091ff');
-
-    var bounds = new google.maps.LatLngBounds();
+    
+    bounds = new google.maps.LatLngBounds();
     
     if(infoWindow == null){
         infoWindow = new google.maps.InfoWindow();
@@ -110,7 +108,6 @@ function initMap() {
             position: position,
             title: title,
             animation: google.maps.Animation.DROP,
-            icon: defaultIcon,
             id: i
         });
         // Push the marker to our array of markers.
@@ -130,12 +127,19 @@ function initMap() {
     }
 
     map.fitBounds(bounds);
+    
+    google.maps.event.addDomListener(window, "resize", function() {
+        var center = map.getCenter();
+        google.maps.event.trigger(map, "resize");
+        map.setCenter(center); 
+    });
 }
 
 function resizeMap(){
-    var bounds = new google.maps.LatLngBounds();
+    map.setCenter(map.getCenter());
+    bounds = new google.maps.LatLngBounds();
     for (var i = 0; i < markers.length; i++) {
-        var marker = markers[i];
+        marker = markers[i];
         marker.setMap(map);
         bounds.extend(marker.position);
     }
@@ -164,19 +168,7 @@ function populateInfoWindow(marker, infowindow) {
     }
 }
 
-// This function takes in a COLOR, and then creates a new marker
-function makeMarkerIcon(markerColor) {
-    var markerImage = new google.maps.MarkerImage(
-        'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
-        '|40|_|%E2%80%A2',
-        new google.maps.Size(21, 34),
-        new google.maps.Point(0, 0),
-        new google.maps.Point(10, 34),
-        new google.maps.Size(21,34));
-    return markerImage;
-}
-
-// Show Wikipedia Links                                    
+// Show Wikipedia Links in infoWindow                                   
 function getWikiLinks(mark, infowindow) {
 	var url = mark.title.replace(/ /g, '%20');
     var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=' + url + '&format=json&callback=wikiCallback';
