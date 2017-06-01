@@ -17,5 +17,9 @@
 	- copy pub key to ~/.ssh/authorized_keys
 	- remove port 22 in /etc/ssh/sshd_config
 	- .ssh 700; .ssh/authorized_keys 600;
+	- Installed apache
+	- Installed wsgi and configured .wsgi file location
+	- Tested myapp.wsgi to print 'hello world!'
+	- installed postgresql
 
 4. Third Parth resources
