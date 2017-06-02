@@ -70,26 +70,31 @@ function viewModel() {
     var isHidden = true;
     this.toggleLeftPanel = function(){
         if(isHidden){
-            $('#map').animate({left:'-=310px'});
-            $('#menuBar').animate({left:'-=310px'});
+            $('#map').animate({left:'-=310px'},700);
+            $('#menuBar').animate({left:'-=310px'}, 700, function(){
+                resizeMap();
+            });
         }else{  
-            $('#map').animate({left:'+=310px'});
-            $('#menuBar').animate({left:'+=310px'});
+            $('#map').animate({left:'+=310px'}, 700);
+            $('#menuBar').animate({left:'+=310px'}, 700, function(){
+                resizeMap();
+            });
         }
         isHidden = !isHidden;
-        //TODO: Still not working.
-        resizeMap();
     };
 }
 
 ko.applyBindings(new viewModel());
 
-
 function initMap() {
     map = new google.maps.Map(document.getElementById('map'), {
         center: {lat: 39.9929431, lng: 116.3965112},
-        zoom: 13,
-        mapTypeControl: false
+        zoom: 13
+    });
+    
+    // Resize Map when browser resize
+    google.maps.event.addDomListener(window, "resize", function() {
+        resizeMap();
     });
     
     bounds = new google.maps.LatLngBounds();
@@ -126,23 +131,6 @@ function initMap() {
         bounds.extend(marker.position);
     }
 
-    map.fitBounds(bounds);
-    
-    google.maps.event.addDomListener(window, "resize", function() {
-        var center = map.getCenter();
-        google.maps.event.trigger(map, "resize");
-        map.setCenter(center); 
-    });
-}
-
-function resizeMap(){
-    map.setCenter(map.getCenter());
-    bounds = new google.maps.LatLngBounds();
-    for (var i = 0; i < markers.length; i++) {
-        marker = markers[i];
-        marker.setMap(map);
-        bounds.extend(marker.position);
-    }
     map.fitBounds(bounds);
 }
 
@@ -189,3 +177,8 @@ function getWikiLinks(mark, infowindow) {
 	});
 }
 
+function resizeMap(){
+    var center = map.getCenter();
+    google.maps.event.trigger(map, "resize");
+    map.setCenter(center); 
+}
