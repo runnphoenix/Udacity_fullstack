@@ -1,5 +1,8 @@
 // Global variables
 var map;
+var markers = [];
+var infoWindow;
+var bounds;
 var locations = [
     {title: 'Forbidden City', location: {lat: 39.9163447, lng: 116.3971546}},
     {title: 'Yuan Ming Yuan Park', location: {lat: 40.0080982, lng: 116.2982148}},
@@ -8,9 +11,7 @@ var locations = [
     {title: 'Tiananmen Square', location: {lat: 39.9054895, lng: 116.3976317}},
     {title: 'CCTV Headequarters', location: {lat: 39.9152751, lng: 116.4642312}}
 ];
-var markers = [];
-var infoWindow;
-var bounds;
+var animateDuration = 300;
 
 // VM
 function viewModel() {
@@ -56,7 +57,6 @@ function viewModel() {
 	        }
 	    }
         
-        //TODO: improve performance
         self.locationList.removeAll();
         locations.forEach(function(location){
             self.locationList.push(location);
@@ -70,14 +70,14 @@ function viewModel() {
     var isHidden = true;
     this.toggleLeftPanel = function(){
         if(isHidden){
-            $('#map').animate({left:'-=310px'},700);
-            $('#menuBar').animate({left:'-=310px'}, 700, function(){
-                resizeMap();
+            $('#map').animate({left:'-=310px'}, animateDuration);
+            $('#menuBar').animate({left:'-=310px'}, animateDuration, function(){
+                refreshMap();
             });
         }else{  
-            $('#map').animate({left:'+=310px'}, 700);
-            $('#menuBar').animate({left:'+=310px'}, 700, function(){
-                resizeMap();
+            $('#map').animate({left:'+=310px'}, animateDuration);
+            $('#menuBar').animate({left:'+=310px'}, animateDuration, function(){
+                refreshMap();
             });
         }
         isHidden = !isHidden;
@@ -92,9 +92,9 @@ function initMap() {
         zoom: 13
     });
     
-    // Resize Map when browser resize
+    // Refresh Map when browser resizes
     google.maps.event.addDomListener(window, "resize", function() {
-        resizeMap();
+        refreshMap();
     });
     
     bounds = new google.maps.LatLngBounds();
@@ -103,21 +103,17 @@ function initMap() {
         infoWindow = new google.maps.InfoWindow();
     }
 
-    // The following group uses the location array to create an array of markers on initialize.
+    // Create markers
     for (var i = 0; i < locations.length; i++) {
-        // Get the position from the location array.
         var position = locations[i].location;
         var title = locations[i].title;
-        // Create a marker per location, and put into markers array.
         var marker = new google.maps.Marker({
             position: position,
             title: title,
             animation: google.maps.Animation.DROP,
             id: i
         });
-        // Push the marker to our array of markers.
         markers.push(marker);
-        // Create an onclick event to open the large infowindow at each marker.
         marker.addListener('click', function() {
             populateInfoWindow(this, infoWindow);
             // Animation
@@ -134,14 +130,11 @@ function initMap() {
     map.fitBounds(bounds);
 }
 
-// This function populates the infowindow when the marker is clicked
+// Populates infowindow when marker is clicked
 function populateInfoWindow(marker, infowindow) {
-    // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker != marker) {
-        // Clear the infowindow content to give the streetview time to load.
         infowindow.setContent('');
         infowindow.marker = marker;
-        // Make sure the marker property is cleared if the info window is closed.
         infowindow.addListener('closeclick', function() {
             infowindow.marker = null;
         });
@@ -151,7 +144,6 @@ function populateInfoWindow(marker, infowindow) {
 
 		getWikiLinks(marker, infowindow);
 
-        // Open the infowindow on the correct marker.
         infowindow.open(map, marker);
     }
 }
@@ -173,11 +165,31 @@ function getWikiLinks(mark, infowindow) {
                 infowindowContent += ('<a href=' + articleUrl + '>' + articleString + '</a>' + '<br>');
             }
             infowindow.setContent(infowindowContent);
-		}
+		},
+        error: function(jqXHR, exception){
+            var msg = '';
+            if (jqXHR.status === 0) {
+                msg = 'Not connect.\n Verify Network.';
+            } else if (jqXHR.status == 404) {
+                msg = 'Requested page not found. [404]';
+            } else if (jqXHR.status == 500) {
+                msg = 'Internal Server Error [500].';
+            } else if (exception === 'parsererror') {
+                msg = 'Requested JSON parse failed.';
+            } else if (exception === 'timeout') {
+                msg = 'Time out error.';
+            } else if (exception === 'abort') {
+                msg = 'Ajax request aborted.';
+            } else {
+                msg = 'Uncaught Error.\n' + jqXHR.responseText;
+            }
+            alert(msg);
+        }
 	});
 }
 
-function resizeMap(){
+// Refresh Map
+function refreshMap(){
     var center = map.getCenter();
     google.maps.event.trigger(map, "resize");
     map.setCenter(center); 
