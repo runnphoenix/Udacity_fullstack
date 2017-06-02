@@ -26,8 +26,18 @@ In order to run this project, enter the `/vagrant` directory in your virutal mac
 
 If you need to rebuild the database, remove the current database file `items.db` first, then run `python database_setup.py` and `python lotsofitems.py`.
 
++ *Project 6 - Neighborhood Maps*
+
+Enter proj_2 directory, open `index.html` with your browser.
+
++ *Project 7 - Linux Server Configuration*
+
+
+
 ## History
 + Added Project_1  2016-12-05
 + Added Project_2  2016-12-20
 + Added Project_4  2017-03-10
 + Added project_5  2017-05-23
++ Added Project_6  2017-05-26
++ Added Project_7  2017-05-31
