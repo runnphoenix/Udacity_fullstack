@@ -30,6 +30,7 @@
 	- pip installed Flask-Login oauth2client requests
 	- installed python-psycopg2
 	- installed sqlite3
+	- Enabled UFW and set rules
 
 4. Third Parth resources
 
